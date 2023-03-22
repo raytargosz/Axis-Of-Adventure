@@ -240,9 +240,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0947a880e9c6bdf4eb74b763bc5c8e73, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 825978ecc99a634418393e82168a6429, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.05
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -342,18 +342,18 @@ MonoBehaviour:
   - {fileID: 1629514749}
   - {fileID: 1262842315}
   - {fileID: 605768760}
-  fadeInTime: 4.5
-  holdTime: 4.5
-  fadeOutTime: 3
-  preFadeInDelay: 3
-  postFadeOutDelay: 2
+  fadeInTime: 2
+  holdTime: 8
+  fadeOutTime: 4
+  preFadeInDelay: 5.5
+  postFadeOutDelay: 0.5
   timeBetweenTextLines: 0.66
-  nextSceneName: Main_1
-  fadeInSound: {fileID: 8300000, guid: adc1dfadefea49648b5bb8bf12493219, type: 3}
-  fadeOutSound: {fileID: 8300000, guid: f425f7f066e8a6a43bac4958c32cdfdb, type: 3}
+  nextSceneName: Level_1
+  fadeInSound: {fileID: 0}
+  fadeOutSound: {fileID: 0}
   audioSource: {fileID: 288700055}
   backgroundAudioSource: {fileID: 288700053}
-  fadeInSoundVolume: 1
+  fadeInSoundVolume: 0.35
   fadeOutSoundVolume: 0.15
   backgroundSoundVolume: 0.25
 --- !u!82 &288700055
@@ -598,8 +598,9 @@ MonoBehaviour:
 
     Lucid Reverie Interactive'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
-  m_sharedMaterial: {fileID: 1443461463335317703, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b2035217a9a743a4dbfe3fa1656d5ce7, type: 2}
+  m_sharedMaterial: {fileID: 7683375692609954902, guid: b2035217a9a743a4dbfe3fa1656d5ce7,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -623,19 +624,19 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 33
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 5.9
-  m_wordSpacing: 3.59
-  m_lineSpacing: 3.8
+  m_characterSpacing: -1.17
+  m_wordSpacing: 6.17
+  m_lineSpacing: 41.23
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -713,7 +714,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Once they''re found, the task''s not done,
 
-    Seek the exit, where it
+    Seek the exit, where it''s
     begun.
 
     A world of adventure, puzzles unfold,
@@ -721,8 +722,9 @@ MonoBehaviour:
     In this game of mystery,
     stories untold.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
-  m_sharedMaterial: {fileID: 1443461463335317703, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b2035217a9a743a4dbfe3fa1656d5ce7, type: 2}
+  m_sharedMaterial: {fileID: 7683375692609954902, guid: b2035217a9a743a4dbfe3fa1656d5ce7,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -746,19 +748,19 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 33
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 5.9
-  m_wordSpacing: 3.59
-  m_lineSpacing: 3.8
+  m_characterSpacing: -1.17
+  m_wordSpacing: 6.17
+  m_lineSpacing: 41.23
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -910,6 +912,150 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1397292008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1397292011}
+  - component: {fileID: 1397292010}
+  - component: {fileID: 1397292009}
+  m_Layer: 0
+  m_Name: TimedAudioController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1397292009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397292008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f566d5a8042b4524aae49e2b216538a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startDelay: 4.25
+  fadeIn: 1
+  fadeInTime: 0.1
+--- !u!82 &1397292010
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397292008}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 378570ed0d8161e468cfedaa3d760b08, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1397292011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397292008}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 789.192, y: 460.62076, z: 2.7314153}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1627158501
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,10 +1163,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "In wonder, roam and explore,\r\nRotate the world, seek evermore.\r\nGolden
-    cubes, in numbers abound,\r\nGather them all, secrets unbound.\r"
+    cubes, in numbers abound,\r\nGather them all, secrets unfound.\r"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
-  m_sharedMaterial: {fileID: 1443461463335317703, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b2035217a9a743a4dbfe3fa1656d5ce7, type: 2}
+  m_sharedMaterial: {fileID: 7683375692609954902, guid: b2035217a9a743a4dbfe3fa1656d5ce7,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1044,19 +1191,19 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 33
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 5.9
-  m_wordSpacing: 3.59
-  m_lineSpacing: 3.8
+  m_characterSpacing: -1.17
+  m_wordSpacing: 6.17
+  m_lineSpacing: 41.23
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -1181,8 +1328,9 @@ MonoBehaviour:
 
     One step transforms into a symphony.'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
-  m_sharedMaterial: {fileID: 1443461463335317703, guid: 2c3aedc8a2272a544bea72516fafca04, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b2035217a9a743a4dbfe3fa1656d5ce7, type: 2}
+  m_sharedMaterial: {fileID: 7683375692609954902, guid: b2035217a9a743a4dbfe3fa1656d5ce7,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1206,19 +1354,19 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 33
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 5.9
-  m_wordSpacing: 3.59
-  m_lineSpacing: 3.8
+  m_characterSpacing: -1.17
+  m_wordSpacing: 6.17
+  m_lineSpacing: 41.23
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0

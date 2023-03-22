@@ -20,9 +20,9 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.07355821, g: 0.16414715, b: 0.1792453, a: 1}
-  m_AmbientEquatorColor: {r: 0.12628941, g: 0.19294216, b: 0.17661522, a: 0.89455}
-  m_AmbientGroundColor: {r: 0.063144706, g: 0.09647108, b: 0.08830761, a: 0.89455}
+  m_AmbientSkyColor: {r: 0.40919784, g: 0.6290242, b: 0.67063695, a: 1}
+  m_AmbientEquatorColor: {r: 0.4641533, g: 0.27858323, b: 0.3517736, a: 0.89455}
+  m_AmbientGroundColor: {r: 0.23207664, g: 0.13929161, b: 0.1758868, a: 0.89455}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -123,50 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &7822349
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7822350}
-  - component: {fileID: 7822351}
-  m_Layer: 0
-  m_Name: Post FX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7822350
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7822349}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7822351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7822349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &13043182
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,13 +396,13 @@ MonoBehaviour:
   parent: {fileID: 0}
   hideFXInHierarchy: 1
   particleManager:
-    parent: {fileID: 175677398}
+    parent: {fileID: 2102720564}
     _IsEnabled: 1
     _OpenTab: 0
     vfx: {fileID: 76497449}
     multiplier: 1
   thunderManager:
-    parent: {fileID: 618163062}
+    parent: {fileID: 318472014}
     _IsEnabled: 1
     _OpenTab: 0
     vfx: {fileID: 76497449}
@@ -462,7 +418,7 @@ MonoBehaviour:
     _OpenTab: 0
     vfx: {fileID: 76497449}
   audioManager:
-    parent: {fileID: 1293171954}
+    parent: {fileID: 1878482075}
     _IsEnabled: 1
     _OpenTab: 1
     vfx: {fileID: 76497449}
@@ -470,7 +426,7 @@ MonoBehaviour:
     weatherFXMixer: {fileID: 6122681528400141310, guid: 7657aaa11fc9748449b9a88b6a5dc9ca,
       type: 2}
   postFXManager:
-    parent: {fileID: 7822350}
+    parent: {fileID: 1948645348}
     _IsEnabled: 1
     _OpenTab: 0
     vfx: {fileID: 76497449}
@@ -486,7 +442,7 @@ MonoBehaviour:
     _IsEnabled: 1
     _OpenTab: 0
     vfx: {fileID: 76497449}
-    windZone: {fileID: 1220331094}
+    windZone: {fileID: 887842149}
     windMultiplier: 1
     useWindzone: 1
     generateWindzoneAtRuntime: 1
@@ -513,50 +469,6 @@ MonoBehaviour:
   rainSpeed: 0
   profile: {fileID: 11400000, guid: 9811ba7ef96ef254eb2034d42353f712, type: 2}
   precipitationFXes: []
---- !u!1 &175677397
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 175677398}
-  - component: {fileID: 175677399}
-  m_Layer: 0
-  m_Name: Particle FX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &175677398
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175677397}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &175677399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175677397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &265475787
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,7 +900,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
+      maxColor: {r: 2.046911, g: 2.046911, b: 2.046911, a: 0.45421392}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -5517,6 +5429,50 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &318472013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 318472014}
+  - component: {fileID: 318472015}
+  m_Layer: 0
+  m_Name: Thunder FX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &318472014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318472013}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &318472015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318472013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &357422428
 GameObject:
   m_ObjectHideFlags: 0
@@ -6120,7 +6076,7 @@ GameObject:
   - component: {fileID: 523879072}
   - component: {fileID: 523879073}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Options
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6258,50 +6214,6 @@ MonoBehaviour:
   hoverSound: {fileID: 8300000, guid: b8a47eed99b3f264b92ea6d45fa0c77e, type: 3}
   selectSound: {fileID: 8300000, guid: 9db936869180da34daa0eaf29536e8f2, type: 3}
   audioSource: {fileID: 421244997}
---- !u!1 &618163061
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 618163062}
-  - component: {fileID: 618163063}
-  m_Layer: 0
-  m_Name: Thunder FX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &618163062
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 618163061}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &618163063
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 618163061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &625003122
 GameObject:
   m_ObjectHideFlags: 0
@@ -6316,8 +6228,9 @@ GameObject:
   - component: {fileID: 625003124}
   - component: {fileID: 625003127}
   - component: {fileID: 625003128}
+  - component: {fileID: 625003129}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: Quit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6387,7 +6300,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 625003125}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 625003129}
+        m_TargetAssemblyTypeName: QuitButton, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &625003125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6455,6 +6380,18 @@ MonoBehaviour:
   hoverSound: {fileID: 8300000, guid: b8a47eed99b3f264b92ea6d45fa0c77e, type: 3}
   selectSound: {fileID: 8300000, guid: 9db936869180da34daa0eaf29536e8f2, type: 3}
   audioSource: {fileID: 421244997}
+--- !u!114 &625003129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 625003122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b41ae7d53dbeaea4ab36f8af38e760a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &692043119
 GameObject:
   m_ObjectHideFlags: 0
@@ -6714,10 +6651,10 @@ RectTransform:
   m_Father: {fileID: 1423520901}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -99.99997}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -402}
+  m_SizeDelta: {x: 1066, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &831980887
 MonoBehaviour:
@@ -7205,7 +7142,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
+      maxColor: {r: 2.046911, g: 2.046911, b: 2.046911, a: 0.45421392}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -11942,6 +11879,65 @@ MonoBehaviour:
   fadeOutImage: {fileID: 2025967992}
   fadeDuration: 4
   waitAfterFade: 0
+--- !u!1 &887842148
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 887842151}
+  - component: {fileID: 887842150}
+  - component: {fileID: 887842149}
+  m_Layer: 0
+  m_Name: Wind Zone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!182 &887842149
+WindZone:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887842148}
+  m_Enabled: 1
+  m_Mode: 0
+  m_Radius: 20
+  m_WindMain: 0.5
+  m_WindTurbulence: 1
+  m_WindPulseMagnitude: 0.5
+  m_WindPulseFrequency: 0.01
+--- !u!114 &887842150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887842148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &887842151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887842148}
+  m_LocalRotation: {x: -0, y: 0.90234804, z: -0, w: -0.4310082}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &953812778
 GameObject:
   m_ObjectHideFlags: 0
@@ -12079,10 +12075,10 @@ RectTransform:
   m_Father: {fileID: 1423520901}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 15.0000305}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -300}
+  m_SizeDelta: {x: 1066, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &962212885
 MonoBehaviour:
@@ -12711,65 +12707,6 @@ Behaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068601570}
   m_Enabled: 1
---- !u!1 &1220331093
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1220331096}
-  - component: {fileID: 1220331095}
-  - component: {fileID: 1220331094}
-  m_Layer: 0
-  m_Name: Wind Zone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!182 &1220331094
-WindZone:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220331093}
-  m_Enabled: 1
-  m_Mode: 0
-  m_Radius: 20
-  m_WindMain: 0.5
-  m_WindTurbulence: 1
-  m_WindPulseMagnitude: 0.5
-  m_WindPulseFrequency: 0.01
---- !u!114 &1220331095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220331093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1220331096
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220331093}
-  m_LocalRotation: {x: -0, y: 0.53056693, z: -0, w: 0.847643}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1256198607
 GameObject:
   m_ObjectHideFlags: 0
@@ -13011,7 +12948,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.021568628, g: 0.037254903, b: 0.043137256, a: 1}
+      maxColor: {r: 0.52134144, g: 0.31974214, b: 0.32254457, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -16808,7 +16745,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.021568628, g: 0.037254903, b: 0.043137256, a: 1}
+      maxColor: {r: 0.52134144, g: 0.31974214, b: 0.32254457, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -17735,50 +17672,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e80cb8e50569e8f469aad94563f96e71, type: 3}
---- !u!1 &1293171953
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1293171954}
-  - component: {fileID: 1293171955}
-  m_Layer: 0
-  m_Name: Audio FX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1293171954
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1293171953}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1293171955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1293171953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1339386882
 GameObject:
   m_ObjectHideFlags: 0
@@ -18058,7 +17951,7 @@ GameObject:
   - component: {fileID: 1499732189}
   - component: {fileID: 1499732190}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: Begin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18238,7 +18131,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1752318708}
-  m_LocalRotation: {x: -0.47684783, y: 0, z: 0, w: 0.8789859}
+  m_LocalRotation: {x: -0.06723792, y: 0, z: 0, w: 0.997737}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -18257,7 +18150,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 0.22415511, g: 0.13040818, b: 0.10679088, a: 0}
   m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
@@ -18499,9 +18392,9 @@ MonoBehaviour:
   climateProfile: {fileID: 11400000, guid: e1a4bf0206b48d4428e0e961e057af39, type: 2}
   localTemperatureFilter: 0
   localPrecipitationFilter: 0
-  currentTemperature: 55.40074
-  currentTemperatureCelsius: 13.000412
-  currentPrecipitation: 75.10144
+  currentTemperature: 61.91089
+  currentTemperatureCelsius: 16.61716
+  currentPrecipitation: 76.528656
   currentWeather: {fileID: 11400000, guid: ae94c1a397a01e442a11e8b23ebb1cef, type: 2}
   weatherChangeCheck: {fileID: 0}
   weightedWeatherProfiles:
@@ -18512,23 +18405,23 @@ MonoBehaviour:
   usePhysicalSunHeight: 0
   sunDirection: 107
   sunPitch: 14.9
-  skyZenithColor: {r: 0, g: 0, b: 0, a: 1}
-  skyHorizonColor: {r: 0.027450977, g: 0.09176471, b: 0.12156863, a: 1}
-  cloudColor: {r: 0.021568628, g: 0.037254903, b: 0.043137256, a: 1}
-  cloudHighlightColor: {r: 0.075249195, g: 0.1315804, b: 0.1792453, a: 1}
-  highAltitudeCloudColor: {r: 0.2943663, g: 0.831844, b: 0.990566, a: 1}
-  sunlightColor: {r: 0, g: 0, b: 0, a: 1}
-  starColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
-  ambientLightHorizonColor: {r: 0.14117646, g: 0.21568628, b: 0.19743471, a: 1}
-  ambientLightZenithColor: {r: 0.07355821, g: 0.16414715, b: 0.1792453, a: 1}
+  skyZenithColor: {r: 0.017905071, g: 0.07618992, b: 0.12931441, a: 1}
+  skyHorizonColor: {r: 0.1831061, g: 0.317713, b: 0.37605658, a: 1}
+  cloudColor: {r: 0.52134144, g: 0.31974214, b: 0.32254457, a: 1}
+  cloudHighlightColor: {r: 3.464299, g: 0.939785, b: 0.771274, a: 1}
+  highAltitudeCloudColor: {r: 3.0217202, g: 1.2646172, b: 1.0978081, a: 1}
+  sunlightColor: {r: 0.22415511, g: 0.13040818, b: 0.10679088, a: 1}
+  starColor: {r: 2.046911, g: 2.046911, b: 2.046911, a: 0.45421392}
+  ambientLightHorizonColor: {r: 0.5188679, g: 0.31142277, b: 0.39324087, a: 1}
+  ambientLightZenithColor: {r: 0.40919784, g: 0.6290242, b: 0.67063695, a: 1}
   ambientLightMultiplier: 1
-  galaxyIntensity: 1
+  galaxyIntensity: 0.0052072406
   fogColor1: {r: 0, g: 0, b: 0, a: 0.007843138}
   fogColor2: {r: 0.0029411912, g: 0.010784313, b: 0.011764706, a: 0.13725491}
-  fogColor3: {r: 0.003921569, g: 0.003921569, b: 0.011764706, a: 0.5019608}
-  fogColor4: {r: 0.007843138, g: 0.015686275, b: 0.02745098, a: 0.75686276}
-  fogColor5: {r: 0.02745098, g: 0.07058824, b: 0.12156863, a: 1}
-  fogFlareColor: {r: 0.2943663, g: 0.831844, b: 0.990566, a: 1}
+  fogColor3: {r: 0.005437757, g: 0.03907532, b: 0.05876654, a: 0.5019608}
+  fogColor4: {r: 0.04245723, g: 0.105783425, b: 0.1682399, a: 0.75686276}
+  fogColor5: {r: 0.1831061, g: 0.3115246, b: 0.37605658, a: 1}
+  fogFlareColor: {r: 3.0217202, g: 1.2646172, b: 1.0978081, a: 1}
   gradientExponent: 0.638
   atmosphereVariationMin: 0.13
   atmosphereVariationMax: 0.64
@@ -18536,14 +18429,14 @@ MonoBehaviour:
   sunSize: 1
   sunColor: {r: 10.432951, g: 10.432951, b: 10.432951, a: 1}
   sunFalloff: 28.3
-  sunFlareColor: {r: 0.102127105, g: 0.1492821, b: 0.16037738, a: 1}
+  sunFlareColor: {r: 0.24434742, g: 0.13460898, b: 0.1386958, a: 1}
   moonFalloff: 26.9
-  moonlightColor: {r: 0.36862746, g: 0.6666667, b: 0.7058824, a: 1}
+  moonlightColor: {r: 0.10133743, g: 0.18326983, b: 0.19405037, a: 1}
   moonFlareColor: {r: 0.023529412, g: 0.07450981, b: 0.06666667, a: 1}
   galaxy1Color: {r: 1, g: 0, b: 0.6574917, a: 1}
   galaxy2Color: {r: 0.4681289, g: 0.4470588, b: 1, a: 1}
   galaxy3Color: {r: 0, g: 0.84153175, b: 1, a: 1}
-  lightScatteringColor: {r: 0.011764706, g: 0.17254902, b: 0.29411766, a: 0.90277773}
+  lightScatteringColor: {r: 0, g: 0, b: 0, a: 0}
   rainbowPosition: 16.8
   rainbowWidth: 24.3
   fogStart1: 2
@@ -18553,10 +18446,10 @@ MonoBehaviour:
   fogHeight: 0.86
   fogDensityMultiplier: 1
   fogLightFlareIntensity: 1
-  fogLightFlareFalloff: 10.905264
+  fogLightFlareFalloff: 4.938076
   fogLightFlareSquish: 1
-  cloudMoonColor: {r: 0.07897885, g: 0.120067894, b: 0.13087274, a: 1}
-  cloudSunHighlightFalloff: 14.727682
+  cloudMoonColor: {r: 0.11444527, g: 0.17670462, b: 0.19328308, a: 1}
+  cloudSunHighlightFalloff: 6.5116816
   cloudMoonHighlightFalloff: 29.2
   cloudWindSpeed: 0.74
   clippingThreshold: 0.791
@@ -18613,16 +18506,17 @@ MonoBehaviour:
   win4: 1
   events:
     timeToCheckFor: 0.25
-    currentTick: 38
-    currentHour: 2
+    currentTick: 85
+    currentHour: 5
     useEvents: 1
   cozyTriggerTag: FX Block Zone
   cozyTriggers: []
+  speed: 0
   calendar:
-    currentTicks: 38
+    currentTicks: 85
     meridiemTime:
-      hours: 12
-      minutes: 12
+      hours: 5
+      minutes: 40
       meridiem: 0
     currentDay: 14
     currentYear: 0
@@ -18690,6 +18584,50 @@ MonoBehaviour:
   minTickValue: 38
   maxTickValue: 48
   tickSpeed: 1
+--- !u!1 &1878482074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1878482075}
+  - component: {fileID: 1878482076}
+  m_Layer: 0
+  m_Name: Audio FX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1878482075
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1878482074}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1878482076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1878482074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1891203885
 GameObject:
   m_ObjectHideFlags: 0
@@ -18843,6 +18781,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1891203885}
   m_CullTransparentMesh: 1
+--- !u!1 &1948645347
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1948645348}
+  - component: {fileID: 1948645349}
+  m_Layer: 0
+  m_Name: Post FX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1948645348
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948645347}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1948645349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948645347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1978802001
 GameObject:
   m_ObjectHideFlags: 0
@@ -19262,3 +19244,47 @@ Transform:
   m_Father: {fileID: 1827508506}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2102720563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2102720564}
+  - component: {fileID: 2102720565}
+  m_Layer: 0
+  m_Name: Particle FX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2102720564
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102720563}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2102720565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2102720563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
