@@ -48,6 +48,18 @@ public class OptionsMenu : MonoBehaviour
         optionsMenuPanel.SetActive(isOptionsMenuActive);
         cameraController.enabled = !isOptionsMenuActive;
         playerController.enabled = !isOptionsMenuActive;
+
+        // Show or hide the cursor based on the options menu state
+        if (isOptionsMenuActive)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     public void OnMasterVolumeChanged(float value)

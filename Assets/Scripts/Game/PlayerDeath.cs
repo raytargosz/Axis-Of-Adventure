@@ -26,6 +26,14 @@ public class PlayerDeath : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.D) && Input.GetKey(KeyCode.LeftControl))
+        {
+            TriggerDeathSequence();
+        }
+    }
+
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;

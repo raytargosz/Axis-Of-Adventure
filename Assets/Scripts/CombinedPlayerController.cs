@@ -6,9 +6,11 @@ public class CombinedPlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckDistance = 0.1f;
     public float groundCheckRadius = 0.25f;
+    //public InputActionAsset controllerInput;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
+    public float sprintSpeed = 10f;
 
     [Header("Jumping")]
     public float initialJumpForce = 4f;
@@ -21,6 +23,13 @@ public class CombinedPlayerController : MonoBehaviour
     public AudioClip doubleJumpSound;
     public AudioClip landingSound;
 
+    [Header("Falling Death")]
+    public float maxFallingTime = 3f; 
+    private float currentFallingTime = 0f;
+
+    [SerializeField]
+    private PlayerDeath playerDeath;
+
     private AudioSource audioSource;
     private CharacterController controller;
     private Vector3 moveDirection;
@@ -32,6 +41,10 @@ public class CombinedPlayerController : MonoBehaviour
 
     void Start()
     {
+        // Hide cursor in build
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         controller = GetComponent<CharacterController>();
         audioSource = gameObject.AddComponent<AudioSource>();
         remainingJumps = 2;
@@ -51,8 +64,27 @@ public class CombinedPlayerController : MonoBehaviour
         relativeDirection.y = 0;
         relativeDirection.Normalize();
 
-        moveDirection.x = relativeDirection.x * moveSpeed;
-        moveDirection.z = relativeDirection.z * moveSpeed;
+        float currentSpeed = moveSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        {
+            currentSpeed = sprintSpeed;
+        }
+
+        moveDirection.x = relativeDirection.x * currentSpeed; 
+        moveDirection.z = relativeDirection.z * currentSpeed;
+
+        if (!isGrounded && moveDirection.y < 0)
+        {
+            currentFallingTime += Time.deltaTime;
+            if (currentFallingTime >= maxFallingTime)
+            {
+                playerDeath.TriggerDeathSequence();
+            }
+        }
+        else
+        {
+            currentFallingTime = 0f;
+        }
 
         isGrounded = IsGrounded();
 
@@ -93,7 +125,7 @@ public class CombinedPlayerController : MonoBehaviour
         if (!wasGrounded && isGrounded && landingSound != null)
         {
             audioSource.PlayOneShot(landingSound);
-        }
+        }     
 
         wasGrounded = isGrounded;
 
