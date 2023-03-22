@@ -37,6 +37,18 @@ public class IntroTextController : MonoBehaviour
 
         backgroundAudioSource.volume = backgroundSoundVolume;
         StartCoroutine(FadeInOut());
+
+        // Hide the cursor
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftControl))
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
 
     private IEnumerator FadeInOut()
