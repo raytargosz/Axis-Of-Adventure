@@ -28,6 +28,7 @@ public class CombinedPlayerController : MonoBehaviour
     private float jumpTime;
     private int remainingJumps;
     private bool wasGrounded;
+    private BobbingObject bobbingObject;
 
     void Start()
     {
@@ -39,6 +40,12 @@ public class CombinedPlayerController : MonoBehaviour
 
     void Update()
     {
+        float bobbingObjectVerticalMovement = 0f;
+        if (isGrounded && bobbingObject != null && IsStandingOnBobbingObject())
+        {
+            bobbingObjectVerticalMovement = bobbingObject.GetVerticalMovement();
+        }
+
         float horizontal = Input.GetAxis("Horizontal");
         Vector3 relativeDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, 0));
         relativeDirection.y = 0;
@@ -48,9 +55,6 @@ public class CombinedPlayerController : MonoBehaviour
         moveDirection.z = relativeDirection.z * moveSpeed;
 
         isGrounded = IsGrounded();
-
-        // Log if the player is grounded
-        Debug.Log("Player is grounded: " + isGrounded);
 
         if (isGrounded && !wasGrounded)
         {
@@ -93,7 +97,7 @@ public class CombinedPlayerController : MonoBehaviour
 
         wasGrounded = isGrounded;
 
-        controller.Move(moveDirection * Time.deltaTime);
+        controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.deltaTime);
     }
 
     private bool IsGrounded()
@@ -103,8 +107,41 @@ public class CombinedPlayerController : MonoBehaviour
         bool result = Physics.SphereCast(sphereCastOrigin, groundCheckRadius, Vector3.down, out hit, groundCheckDistance, groundLayer);
 
         // Visualize SphereCast in Scene view
-        Debug.DrawRay(sphereCastOrigin, Vector3.down * (groundCheckDistance + groundCheckRadius), Color.red, 0.1f);
+        Debug.DrawRay(sphereCastOrigin, Vector3.down * (groundCheckDistance + groundCheckRadius), Color.red, 0.05f);
+
+        if (result)
+        {
+            BobbingObject hitBobbingObject = hit.collider.GetComponent<BobbingObject>();
+            if (hitBobbingObject != null)
+            {
+                bobbingObject = hitBobbingObject;
+            }
+            else
+            {
+                bobbingObject = null;
+            }
+        }
+        else
+        {
+            bobbingObject = null;
+        }
 
         return result;
     }
+
+
+    private bool IsStandingOnBobbingObject()
+    {
+        RaycastHit hit;
+        Vector3 sphereCastOrigin = transform.position + controller.center + Vector3.up * (-controller.height / 2 + groundCheckRadius);
+        bool result = Physics.SphereCast(sphereCastOrigin, groundCheckRadius, Vector3.down, out hit, groundCheckDistance, groundLayer);
+
+        if (result && hit.collider.gameObject == bobbingObject.gameObject)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }

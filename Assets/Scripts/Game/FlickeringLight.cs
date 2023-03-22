@@ -11,6 +11,8 @@ public class FlickeringLight : MonoBehaviour
     private float targetIntensity;
     private float flickerSpeed;
 
+    public bool IsFlickering { get; set; } = true;
+
     private void Start()
     {
         if (lightSource == null)
@@ -23,6 +25,8 @@ public class FlickeringLight : MonoBehaviour
 
     private void Update()
     {
+        if (!IsFlickering) return;
+
         lightSource.intensity = Mathf.Lerp(lightSource.intensity, targetIntensity, flickerSpeed * Time.deltaTime);
 
         if (Mathf.Abs(lightSource.intensity - targetIntensity) < 0.1f)

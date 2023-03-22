@@ -9,12 +9,33 @@ public class TriggerAudioOnce : MonoBehaviour
     public float dimPercentage = 90f;
     public float rampBackTime = 3f;
 
+    [Header("Audio Delay Settings")]
+    public float audioStartDelay = 1f; // The delay in seconds before the audio starts playing
+
+    [Header("Unique ID")]
+    [SerializeField] private string uniqueID;
+
     private AudioSource audioSource;
     private bool audioPlayed = false;
     private List<AudioSource> otherAudioSources;
     private Dictionary<AudioSource, float> originalVolumes;
     private static Queue<AudioSource> audioQueue = new Queue<AudioSource>();
     private static bool isPlaying = false;
+    private static TriggerAudioOnce instance;
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
 
     void Start()
     {
@@ -42,11 +63,16 @@ public class TriggerAudioOnce : MonoBehaviour
     {
         if (!audioPlayed && other.CompareTag("Player"))
         {
-            audioQueue.Enqueue(audioSource);
-            audioPlayed = true;
-            if (!isPlaying)
+            if (PlayerPrefs.GetInt(uniqueID, 0) == 0)
             {
-                StartCoroutine(PlayAudioQueue());
+                audioQueue.Enqueue(audioSource);
+                audioPlayed = true;
+                PlayerPrefs.SetInt(uniqueID, 1);
+                PlayerPrefs.Save();
+                if (!isPlaying)
+                {
+                    StartCoroutine(PlayAudioQueue());
+                }
             }
         }
     }
@@ -57,6 +83,7 @@ public class TriggerAudioOnce : MonoBehaviour
         while (audioQueue.Count > 0)
         {
             AudioSource currentAudio = audioQueue.Dequeue();
+            yield return new WaitForSeconds(audioStartDelay); // Wait for the delay time
             currentAudio.Play();
             StartCoroutine(DimOtherAudio(currentAudio));
 

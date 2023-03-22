@@ -20,7 +20,10 @@ public class IsometricCameraController : MonoBehaviour
     public AudioClip rotateRightSFX;
     public AudioClip zoomInSFX;
     public AudioClip zoomOutSFX;
+    public float rotationSFXVolume = 1f;
+    public float scrollSFXVolume = 1f;
     public float sfxCooldown = 0.5f;
+
 
     private Vector3 currentVelocity;
     private Camera cam;
@@ -48,7 +51,7 @@ public class IsometricCameraController : MonoBehaviour
             rotationStartTime = Time.time;
             if (Time.time > lastSFXTime + sfxCooldown)
             {
-                audioSource.PlayOneShot(rotateLeftSFX);
+                audioSource.PlayOneShot(rotateLeftSFX, rotationSFXVolume);
                 lastSFXTime = Time.time;
             }
         }
@@ -58,7 +61,7 @@ public class IsometricCameraController : MonoBehaviour
             rotationStartTime = Time.time;
             if (Time.time > lastSFXTime + sfxCooldown)
             {
-                audioSource.PlayOneShot(rotateRightSFX);
+                audioSource.PlayOneShot(rotateRightSFX, rotationSFXVolume);
                 lastSFXTime = Time.time;
             }
         }
@@ -68,15 +71,15 @@ public class IsometricCameraController : MonoBehaviour
         {
             float oldFov = cam.fieldOfView;
             cam.fieldOfView = Mathf.Clamp(cam.fieldOfView - scroll * fovSpeed, minFov, maxFov);
-            if (Time.time > lastSFXTime + sfxCooldown)
+            if (Time.time > lastSFXTime + sfxCooldown && cam.fieldOfView != oldFov)
             {
                 if (scroll > 0f)
                 {
-                    audioSource.PlayOneShot(zoomInSFX);
+                    audioSource.PlayOneShot(zoomInSFX, scrollSFXVolume);
                 }
                 else
                 {
-                    audioSource.PlayOneShot(zoomOutSFX);
+                    audioSource.PlayOneShot(zoomOutSFX, scrollSFXVolume);
                 }
                 lastSFXTime = Time.time;
             }
@@ -85,14 +88,17 @@ public class IsometricCameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (Time.time < rotationStartTime + rotationDuration)
+        if (target != null)
         {
-            rotationAngle = Mathf.LerpAngle(rotationAngle, targetRotationAngle, (Time.time - rotationStartTime) / rotationDuration);
-        }
+            if (Time.time < rotationStartTime + rotationDuration)
+            {
+                rotationAngle = Mathf.LerpAngle(rotationAngle, targetRotationAngle, (Time.time - rotationStartTime) / rotationDuration);
+            }
 
-        Quaternion targetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
-        Vector3 targetPosition = target.position - targetRotation * Vector3.forward * distance + offset;
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, smoothingSpeed);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            Quaternion updatedTargetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
+            Vector3 updatedTargetPosition = target.position - updatedTargetRotation * Vector3.forward * distance + offset;
+            transform.position = Vector3.SmoothDamp(transform.position, updatedTargetPosition, ref currentVelocity, smoothingSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
+        }
     }
 }

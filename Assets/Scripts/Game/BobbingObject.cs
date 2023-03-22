@@ -14,6 +14,16 @@ public class BobbingObject : MonoBehaviour
     private Vector3 startPosition;
     private float timeOffset;
 
+    public float GetVerticalMovement()
+    {
+        return bobbingAmplitude * bobbingFrequency * Mathf.Cos((Time.time + timeOffset) * bobbingFrequency);
+    }
+
+    public float GetVerticalVelocity()
+    {
+        return bobbingAmplitude * bobbingFrequency * Mathf.Cos((Time.time + timeOffset) * bobbingFrequency);
+    }
+
     private void Start()
     {
         // Store the initial position of the object depending on the useLocalSpace setting

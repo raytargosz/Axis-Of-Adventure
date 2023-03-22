@@ -1,26 +1,43 @@
 using System.Collections;
 using UnityEngine;
+using DistantLands.Cozy;
 
 public class LightController : MonoBehaviour
 {
-    public DistantLands.Cozy.CozyController cozyController;
+    [System.Serializable]
+    public struct LightTimeRange
+    {
+        public float lowerBound;
+        public float upperBound;
+    }
+
+    public CozyWeather cozyWeather;
     public Light[] lights;
-    public float ticksLowerBound;
-    public float ticksUpperBound;
+    public LightTimeRange[] lightTimeRanges;
     public float rampTime = 3f;
 
     private bool areLightsOn = false;
 
     private void Update()
     {
-        float currentTicks = cozyController.currentTicks;
+        float currentTicks = cozyWeather.currentTicks;
 
-        if (!areLightsOn && currentTicks >= ticksLowerBound && currentTicks <= ticksUpperBound)
+        bool shouldBeOn = false;
+        foreach (LightTimeRange range in lightTimeRanges)
+        {
+            if (currentTicks >= range.lowerBound && currentTicks <= range.upperBound)
+            {
+                shouldBeOn = true;
+                break;
+            }
+        }
+
+        if (!areLightsOn && shouldBeOn)
         {
             StartCoroutine(RampLightsIntensity(true));
             areLightsOn = true;
         }
-        else if (areLightsOn && (currentTicks < ticksLowerBound || currentTicks > ticksUpperBound))
+        else if (areLightsOn && !shouldBeOn)
         {
             StartCoroutine(RampLightsIntensity(false));
             areLightsOn = false;
@@ -32,6 +49,15 @@ public class LightController : MonoBehaviour
         float startTime = Time.time;
         float initialIntensity = lights[0].intensity;
         float targetIntensity = rampUp ? 1 : 0;
+
+        foreach (Light light in lights)
+        {
+            FlickeringLight flickeringLight = light.GetComponent<FlickeringLight>();
+            if (flickeringLight != null)
+            {
+                flickeringLight.IsFlickering = rampUp;
+            }
+        }
 
         while (Time.time - startTime < rampTime)
         {

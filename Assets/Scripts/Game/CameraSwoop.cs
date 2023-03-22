@@ -37,6 +37,8 @@ public class CameraSwoop : MonoBehaviour
     [Tooltip("Panel to fade out during the swoop")]
     [SerializeField] private Image panel;
 
+    [SerializeField] private IsometricCameraController isoCamController;
+
     private float startTime;
     private bool isSwooping;
 
@@ -56,6 +58,8 @@ public class CameraSwoop : MonoBehaviour
         audioSource.clip = swoopAudioClip;
         audioSource.volume = audioVolume;
         audioSource.Play();
+
+        isoCamController.enabled = false;
     }
 
     private void Update()
@@ -98,6 +102,7 @@ public class CameraSwoop : MonoBehaviour
                 // Swoop animation is finished
                 mainCamera.transform.position = endPosition + cameraOffset;
                 isSwooping = false;
+                isoCamController.enabled = true;
             }
         }
 

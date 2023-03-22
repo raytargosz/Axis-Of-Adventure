@@ -1,6 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class Collectible : MonoBehaviour
 {
@@ -10,19 +12,28 @@ public class Collectible : MonoBehaviour
     [SerializeField] private float spinTime = 4f;
     [SerializeField] private GameObject particleEffectPrefab;
     [SerializeField] private string nextSceneName;
-    [SerializeField] private float fadeOutDuration = 1f;
+    [SerializeField] private Vector3 spinDirection = Vector3.up;
+    [SerializeField] private float sfxVolume = 1f;
+    [SerializeField] private GameObject image;
+    [SerializeField] private AudioClip levelCompleteSFX;
 
+    [Header("Transition")]
+    public CombinedPlayerController playerController;
+    public float fadeInDuration = 1f;
+
+    private CollectibleManager collectibleManager;
     private AudioSource audioSource;
     private bool isCollected;
 
     private void Start()
     {
+        collectibleManager = FindObjectOfType<CollectibleManager>();
         audioSource = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigger entered: " + other.gameObject.name);
+        //Debug.Log("Trigger entered: " + other.gameObject.name);
 
         if (other.CompareTag("Player") && !isCollected)
         {
@@ -32,27 +43,26 @@ public class Collectible : MonoBehaviour
 
             CollectibleManager collectibleManager = FindObjectOfType<CollectibleManager>();
             collectibleManager.IncrementCollectibleCount();
-            int collectibleCounter = CollectibleManager.CollectibleCount;
 
-            if (collectibleCounter % 5 == 0 && specialCollectibleSound != null)
+            if (collectibleManager.IsSpecialCollectible(CollectibleManager.CollectibleCount) && specialCollectibleSound != null)
             {
-                audioSource.PlayOneShot(specialCollectibleSound);
+                audioSource.PlayOneShot(specialCollectibleSound, sfxVolume);
             }
             else if (collectibleSound != null)
             {
-                audioSource.PlayOneShot(collectibleSound);
+                audioSource.PlayOneShot(collectibleSound, sfxVolume);
             }
 
             StartCoroutine(SpinAndDisappear(spinTime));
 
-            if (collectibleCounter >= collectibleManager.RequiredPickupAmount)
+            if (collectibleManager.HasRequiredPickupAmountReached())
             {
-                StartCoroutine(FadeOutAndLoadNextScene());
+                StartCoroutine(FadeInImageAndLoadNextScene(image, fadeInDuration));
             }
         }
     }
 
-    private IEnumerator SpinAndDisappear(float duration)
+    IEnumerator SpinAndDisappear(float duration)
     {
         GameObject particleEffectInstance = null;
 
@@ -68,7 +78,7 @@ public class Collectible : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            transform.Rotate(0, 360 * Time.deltaTime * (elapsedTime / duration) * spinSpeedMultiplier, 0);
+            transform.Rotate(spinDirection * 360 * Time.deltaTime * (elapsedTime / duration) * spinSpeedMultiplier);
             float newYPosition = initialYPosition + (elapsedTime / duration) * upwardSpeed;
             transform.position = new Vector3(transform.position.x, newYPosition, transform.position.z);
 
@@ -83,7 +93,7 @@ public class Collectible : MonoBehaviour
 
         if (disappearSound != null)
         {
-            audioSource.PlayOneShot(disappearSound);
+            audioSource.PlayOneShot(disappearSound, sfxVolume);
         }
 
         if (particleEffectInstance != null)
@@ -93,21 +103,88 @@ public class Collectible : MonoBehaviour
         Destroy(gameObject, disappearSound != null ? disappearSound.length : 0f);
     }
 
-    private IEnumerator FadeOutAndLoadNextScene()
+    IEnumerator FadeOutAudioSources(AudioSource[] audioSources, float duration)
     {
-        CollectibleManager collectibleManager = FindObjectOfType<CollectibleManager>();
-        CanvasGroup canvasGroup = collectibleManager.CollectibleCounterText.transform.parent.GetComponent<CanvasGroup>();
-        if (canvasGroup != null)
+        float elapsedTime = 0f;
+
+        Dictionary<AudioSource, float> initialVolumes = audioSources.ToDictionary(x => x, x => x.volume);
+
+        while (elapsedTime < duration)
         {
-            float elapsedTime = 0f;
-            while (elapsedTime < fadeOutDuration)
+            foreach (AudioSource audioSource in audioSources)
             {
-                canvasGroup.alpha = Mathf.Lerp(1, 0, elapsedTime / fadeOutDuration);
-                elapsedTime += Time.deltaTime;
-                yield return null;
+                audioSource.volume = Mathf.Lerp(initialVolumes[audioSource], 0, elapsedTime / duration);
             }
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
-        SceneManager.LoadScene(nextSceneName);
     }
 
+        IEnumerator FadeInImageAndLoadNextScene(GameObject image, float duration)
+        {
+            if (levelCompleteSFX != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(levelCompleteSFX);
+            }
+
+            playerController.enabled = false; // Disable the player controller
+
+            // Get all audio sources in the scene
+            AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+
+            // Fade out all audio sources except level complete SFX
+            StartCoroutine(FadeOutAudioSources(audioSources.Where(a => a != audioSource).ToArray(), duration));
+
+            // Fade in image
+            CanvasGroup canvasGroup = image.GetComponent<CanvasGroup>();
+            if (canvasGroup != null)
+            {
+                float elapsedTime = 0f;
+                while (elapsedTime < duration)
+                {
+                    canvasGroup.alpha = Mathf.Lerp(0, 1, elapsedTime / duration);
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
+            }
+
+            // Load the next scene
+            SceneManager.LoadScene(nextSceneName);
+        }
+
+
+        private IEnumerator FadeOutAllAudioExceptLevelCompleteSFX(AudioSource[] audioSources, float duration)
+        {
+        float elapsedTime = 0f;
+        float[] initialVolumes = new float[audioSources.Length];
+
+        for (int i = 0; i < audioSources.Length; i++)
+        {
+            initialVolumes[i] = audioSources[i].volume;
+        }
+
+        while (elapsedTime < duration)
+        {
+            for (int i = 0; i < audioSources.Length; i++)
+            {
+                if (audioSources[i] != audioSource || !audioSource.isPlaying || audioSource.clip != levelCompleteSFX)
+                {
+                    audioSources[i].volume = Mathf.Lerp(initialVolumes[i], 0, elapsedTime / duration);
+                }
+            }
+
+            elapsedTime += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        // Set all audio sources to 0 volume, except for the level complete SFX
+        for (int i = 0; i < audioSources.Length; i++)
+        {
+            if (audioSources[i] != audioSource || !audioSource.isPlaying || audioSource.clip != levelCompleteSFX)
+            {
+                audioSources[i].volume = 0;
+            }
+        }
+    }
 }
