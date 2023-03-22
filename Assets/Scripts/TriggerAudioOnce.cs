@@ -6,13 +6,17 @@ using UnityEngine;
 public class TriggerAudioOnce : MonoBehaviour
 {
     [Header("Volume Dimming Settings")]
+    [Tooltip("Percentage of volume reduction for other audio sources.")]
     public float dimPercentage = 90f;
+    [Tooltip("Time in seconds to ramp back the volume of other audio sources.")]
     public float rampBackTime = 3f;
 
     [Header("Audio Delay Settings")]
-    public float audioStartDelay = 1f; // The delay in seconds before the audio starts playing
+    [Tooltip("The delay in seconds before the audio starts playing.")]
+    public float audioStartDelay = 1f;
 
     [Header("Unique ID")]
+    [Tooltip("Unique identifier for each audio trigger.")]
     [SerializeField] private string uniqueID;
 
     private AudioSource audioSource;
@@ -21,21 +25,6 @@ public class TriggerAudioOnce : MonoBehaviour
     private Dictionary<AudioSource, float> originalVolumes;
     private static Queue<AudioSource> audioQueue = new Queue<AudioSource>();
     private static bool isPlaying = false;
-    private static TriggerAudioOnce instance;
-
-    void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-    }
 
     void Start()
     {
@@ -85,7 +74,7 @@ public class TriggerAudioOnce : MonoBehaviour
             AudioSource currentAudio = audioQueue.Dequeue();
             yield return new WaitForSeconds(audioStartDelay); // Wait for the delay time
             currentAudio.Play();
-            StartCoroutine(DimOtherAudio(currentAudio));
+            StartCoroutine(DimOtherAudioWithDelay(currentAudio)); // Call the new method here
 
             yield return new WaitForSeconds(currentAudio.clip.length + 2f); // Wait for the clip to finish playing and add 2 seconds delay
         }
@@ -96,7 +85,7 @@ public class TriggerAudioOnce : MonoBehaviour
     {
         foreach (AudioSource src in otherAudioSources)
         {
-            if (src != currentAudio) // Exclude the currentAudio from being dimmed
+            if (src != currentAudio)
             {
                 StartCoroutine(DimAudioSource(src));
             }
@@ -104,13 +93,12 @@ public class TriggerAudioOnce : MonoBehaviour
 
         yield return new WaitForSeconds(currentAudio.clip.length);
 
-        // Check if the player has collected all items
         CollectibleManager collectibleManager = FindObjectOfType<CollectibleManager>();
         if (collectibleManager != null && !collectibleManager.HasRequiredPickupAmountReached())
         {
             foreach (AudioSource src in otherAudioSources)
             {
-                if (src != currentAudio) // Exclude the currentAudio from being ramped back
+                if (src != currentAudio)
                 {
                     StartCoroutine(RampBackAudioSource(src));
                 }
@@ -118,9 +106,15 @@ public class TriggerAudioOnce : MonoBehaviour
         }
         else
         {
-            // Fade out the current audio source when the player has collected all items
             StartCoroutine(DimAudioSource(currentAudio));
         }
+    }
+
+    private IEnumerator DimOtherAudioWithDelay(AudioSource currentAudio)
+    {
+        // Add a small delay to let the scene's music start playing
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(DimOtherAudio(currentAudio));
     }
 
     private IEnumerator DimAudioSource(AudioSource src)
@@ -131,6 +125,11 @@ public class TriggerAudioOnce : MonoBehaviour
 
         while (elapsedTime < rampBackTime)
         {
+            if (src == null)
+            {
+                break;
+            }
+
             elapsedTime += Time.deltaTime;
             src.volume = Mathf.Lerp(currentVolume, targetVolume, elapsedTime / rampBackTime);
             yield return null;
@@ -145,6 +144,11 @@ public class TriggerAudioOnce : MonoBehaviour
 
         while (elapsedTime < rampBackTime)
         {
+            if (src == null)
+            {
+                break;
+            }
+
             elapsedTime += Time.deltaTime;
             src.volume = Mathf.Lerp(currentVolume, targetVolume, elapsedTime / rampBackTime);
             yield return null;
