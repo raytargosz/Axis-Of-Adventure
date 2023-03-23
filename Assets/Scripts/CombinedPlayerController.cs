@@ -237,23 +237,19 @@ public class CombinedPlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Vector3 cameraRight = mainCamera.transform.right;
-        Vector3 cameraUp = mainCamera.transform.up;
-        Vector3 cameraForward = mainCamera.transform.forward;
-        cameraForward.y = 0; // Make sure the forward direction is only in the XZ plane
-        cameraForward.Normalize();
-
         if (other.CompareTag("RedCube"))
         {
-            boostDirection = -cameraRight * xAxisBoostSpeed; // Negate the direction to reverse the boost
+            boostDirection = moveDirection.normalized * xAxisBoostSpeed;
             boostTimer = boostDuration;
         }
         else if (other.CompareTag("BlueCube"))
         {
-            boostDirection = cameraUp * yAxisBoostSpeed;
+            boostDirection = moveDirection.normalized * yAxisBoostSpeed;
             boostTimer = boostDuration;
         }
     }
+
+
 
     private void ApplyBoost()
     {
@@ -262,11 +258,6 @@ public class CombinedPlayerController : MonoBehaviour
             controller.Move(boostDirection * Time.deltaTime);
             boostTimer -= Time.deltaTime;
         }
-    }
-
-    public void ApplyBoost(Vector3 boost)
-    {
-        moveDirection += boost;
     }
 
     public Vector3 MoveDirection
