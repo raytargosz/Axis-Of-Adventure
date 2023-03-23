@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class CombinedPlayerController : MonoBehaviour
 {
     public Camera mainCamera;
@@ -66,32 +65,6 @@ public class CombinedPlayerController : MonoBehaviour
         controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.deltaTime);
     }
 
-    void FixedUpdate()
-    {
-        FixedUpdateActions();
-    }
-
-    void FixedUpdateActions()
-    {
-        float bobbingObjectVerticalMovement = GetBobbingObjectVerticalMovement();
-
-        UpdateMoveDirection();
-        UpdateFallingDeath();
-        UpdateGroundedStatus();
-        UpdateJump();
-
-        controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.fixedDeltaTime);
-    }
-
-    private void UpdateJumpInput()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            jumpTime = maxJumpTime;
-        }
-    }
-
-
     private float GetBobbingObjectVerticalMovement()
     {
         return (isGrounded && bobbingObject != null && IsStandingOnBobbingObject())
@@ -115,13 +88,12 @@ public class CombinedPlayerController : MonoBehaviour
         moveDirection.z = relativeDirection.z * currentSpeed;
     }
 
-
     private void UpdateFallingDeath()
     {
         if (!isGrounded && moveDirection.y < 0)
         {
             currentFallingTime += Time.deltaTime;
-            if (currentFallingTime >= maxFallingTime || Mathf.Approximately(currentFallingTime, maxFallingTime))
+            if (currentFallingTime >= maxFallingTime)
             {
                 playerDeath.TriggerDeathSequence();
             }
