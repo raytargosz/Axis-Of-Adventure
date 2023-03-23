@@ -34,7 +34,8 @@ public class CombinedBoost : MonoBehaviour
         // Create and configure the AudioSource
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 1.0f; // 3D sound
+        audioSource.spatialBlend = 0f; // 3D sound
+        audioSource.volume = 1.0f; // Increase the volume to the maximum
     }
 
 
