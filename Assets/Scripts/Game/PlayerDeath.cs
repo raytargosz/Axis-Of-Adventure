@@ -6,12 +6,25 @@ using System.Collections.Generic;
 
 public class PlayerDeath : MonoBehaviour
 {
+    [Tooltip("Death sound effect")]
     [SerializeField] private AudioClip deathSound;
+
+    [Tooltip("Canvas group for the panel")]
     [SerializeField] private CanvasGroup panelCanvasGroup;
+
+    [Tooltip("Canvas group for the text")]
     [SerializeField] private CanvasGroup textCanvasGroup;
+
+    [Tooltip("You Died text component")]
     [SerializeField] private TMP_Text youDiedText;
+
+    [Tooltip("Audio fade-out duration")]
     [SerializeField] private float audioFadeOutDuration = 1f;
+
+    [Tooltip("Death sequence delay")]
     [SerializeField] private float deathDelay = 5f;
+
+    [Tooltip("Fade duration for UI elements")]
     [SerializeField] private float fadeDuration = 1f;
 
     private AudioSource audioSource;
@@ -21,7 +34,6 @@ public class PlayerDeath : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        isDead = false; // Reset isDead flag
         SceneManager.sceneLoaded += OnSceneLoaded;
         DontDestroyOnLoad(gameObject);
     }
@@ -48,96 +60,60 @@ public class PlayerDeath : MonoBehaviour
         }
     }
 
-    public void HandlePlayerDeath()
-    {
-        if (!isDead)
-        {
-            isDead = true;
-            StartCoroutine(DeathSequence());
-        }
-    }
-
     private IEnumerator DeathSequence()
     {
-        // Fade out other audio sources
+        FadeAudioSourcesOut(audioFadeOutDuration);
+        yield return new WaitForSeconds(audioFadeOutDuration);
+
+        audioSource.volume = 0.66f;
+        audioSource.PlayOneShot(deathSound);
+
+        yield return StartCoroutine(FadeUIElement(panelCanvasGroup, 0, 1, fadeDuration));
+        yield return StartCoroutine(FadeUIElement(textCanvasGroup, 0, 1, fadeDuration));
+        yield return new WaitForSeconds(deathDelay);
+        yield return StartCoroutine(FadeUIElement(textCanvasGroup, 1, 0, fadeDuration));
+
+        panelCanvasGroup.alpha = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void FadeAudioSourcesOut(float duration)
+    {
         AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
         initialAudioSourceVolumes = new Dictionary<AudioSource, float>();
 
         foreach (AudioSource source in allAudioSources)
         {
             initialAudioSourceVolumes.Add(source, source.volume);
+            StartCoroutine(FadeAudioSource(source, source.volume, 0, duration));
         }
+    }
 
+    private IEnumerator FadeAudioSource(AudioSource source, float startVolume, float endVolume, float duration)
+    {
         float elapsedTime = 0f;
-        while (elapsedTime < audioFadeOutDuration)
+        while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            float fadeProgress = elapsedTime / audioFadeOutDuration;
-            foreach (AudioSource source in allAudioSources)
-            {
-                source.volume = Mathf.Lerp(initialAudioSourceVolumes[source], 0, fadeProgress);
-            }
+            source.volume = Mathf.Lerp(startVolume, endVolume, elapsedTime / duration);
             yield return null;
         }
+    }
 
-        audioSource.volume = 0.66f;
-        audioSource.PlayOneShot(deathSound);
-
-        // Fade in panel
-        elapsedTime = 0f;
-        while (elapsedTime < fadeDuration)
+    private IEnumerator FadeUIElement(CanvasGroup canvasGroup, float startAlpha, float endAlpha, float duration)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            panelCanvasGroup.alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
-            Debug.Log("Panel fade-in progress: " + panelCanvasGroup.alpha);
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration);
             yield return null;
         }
-
-        // Fade in text
-        elapsedTime = 0f;
-        while (elapsedTime < fadeDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            textCanvasGroup.alpha = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
-            Debug.Log("Text fade-in progress: " + textCanvasGroup.alpha);
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(deathDelay);
-
-        // Fade out text
-        elapsedTime = 0f;
-        while (elapsedTime < fadeDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            textCanvasGroup.alpha = Mathf.Lerp(1, 0, elapsedTime / fadeDuration);
-            Debug.Log("Text fade-out progress: " + textCanvasGroup.alpha);
-            yield return null;
-        }
-
-        // Set the panel alpha to 1
-        panelCanvasGroup.alpha = 1;
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StartCoroutine(FadePanelAfterSceneLoad());
-    }
-
-    private IEnumerator FadePanelAfterSceneLoad()
-    {
-        float elapsedTime = 0f;
-
-        while (elapsedTime < fadeDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            panelCanvasGroup.alpha = Mathf.Lerp(1, 0, elapsedTime / fadeDuration);
-            Debug.Log("Panel fade-out progress: " + panelCanvasGroup.alpha);
-            yield return null;
-        }
-
+        StartCoroutine(FadeUIElement(panelCanvasGroup, 1, 0, fadeDuration));
         isDead = false; // Reset isDead flag
     }
 }

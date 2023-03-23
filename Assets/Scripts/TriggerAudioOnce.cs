@@ -28,6 +28,11 @@ public class TriggerAudioOnce : MonoBehaviour
 
     void Start()
     {
+        InitializeComponents();
+    }
+
+    private void InitializeComponents()
+    {
         audioSource = GetComponent<AudioSource>();
 
         BoxCollider boxCollider = GetComponent<BoxCollider>();
@@ -43,25 +48,17 @@ public class TriggerAudioOnce : MonoBehaviour
         }
     }
 
-    public Dictionary<AudioSource, float> GetOriginalVolumes()
-    {
-        return originalVolumes;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (!audioPlayed && other.CompareTag("Player"))
+        if (!audioPlayed && other.CompareTag("Player") && PlayerPrefs.GetInt(uniqueID, 0) == 0)
         {
-            if (PlayerPrefs.GetInt(uniqueID, 0) == 0)
+            audioQueue.Enqueue(audioSource);
+            audioPlayed = true;
+            PlayerPrefs.SetInt(uniqueID, 1);
+            PlayerPrefs.Save();
+            if (!isPlaying)
             {
-                audioQueue.Enqueue(audioSource);
-                audioPlayed = true;
-                PlayerPrefs.SetInt(uniqueID, 1);
-                PlayerPrefs.Save();
-                if (!isPlaying)
-                {
-                    StartCoroutine(PlayAudioQueue());
-                }
+                StartCoroutine(PlayAudioQueue());
             }
         }
     }
@@ -72,13 +69,18 @@ public class TriggerAudioOnce : MonoBehaviour
         while (audioQueue.Count > 0)
         {
             AudioSource currentAudio = audioQueue.Dequeue();
-            yield return new WaitForSeconds(audioStartDelay); // Wait for the delay time
+            yield return new WaitForSeconds(audioStartDelay);
             currentAudio.Play();
-            StartCoroutine(DimOtherAudioWithDelay(currentAudio)); // Call the new method here
-
-            yield return new WaitForSeconds(currentAudio.clip.length + 2f); // Wait for the clip to finish playing and add 2 seconds delay
+            StartCoroutine(DimOtherAudioWithDelay(currentAudio));
+            yield return new WaitForSeconds(currentAudio.clip.length + 2f);
         }
         isPlaying = false;
+    }
+
+    private IEnumerator DimOtherAudioWithDelay(AudioSource currentAudio)
+    {
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(DimOtherAudio(currentAudio));
     }
 
     private IEnumerator DimOtherAudio(AudioSource currentAudio)
@@ -93,64 +95,36 @@ public class TriggerAudioOnce : MonoBehaviour
 
         yield return new WaitForSeconds(currentAudio.clip.length);
 
-        CollectibleManager collectibleManager = FindObjectOfType<CollectibleManager>();
-        if (collectibleManager != null && !collectibleManager.HasRequiredPickupAmountReached())
+        foreach (AudioSource src in otherAudioSources)
         {
-            foreach (AudioSource src in otherAudioSources)
+            if (src != currentAudio)
             {
-                if (src != currentAudio)
-                {
-                    StartCoroutine(RampBackAudioSource(src));
-                }
+                StartCoroutine(RampBackAudioSource(src));
             }
         }
-        else
-        {
-            StartCoroutine(DimAudioSource(currentAudio));
-        }
-    }
-
-    private IEnumerator DimOtherAudioWithDelay(AudioSource currentAudio)
-    {
-        // Add a small delay to let the scene's music start playing
-        yield return new WaitForSeconds(0.5f);
-        StartCoroutine(DimOtherAudio(currentAudio));
     }
 
     private IEnumerator DimAudioSource(AudioSource src)
     {
-        float elapsedTime = 0f;
-        float currentVolume = src.volume;
-        float targetVolume = originalVolumes[src] * (1f - dimPercentage / 100f);
-
-        while (elapsedTime < rampBackTime)
-        {
-            if (src == null)
-            {
-                break;
-            }
-
-            elapsedTime += Time.deltaTime;
-            src.volume = Mathf.Lerp(currentVolume, targetVolume, elapsedTime / rampBackTime);
-            yield return null;
-        }
+        yield return ChangeAudioSourceVolume(src, originalVolumes[src] * (1f - dimPercentage / 100f), rampBackTime);
     }
 
     private IEnumerator RampBackAudioSource(AudioSource src)
     {
+        yield return ChangeAudioSourceVolume(src, originalVolumes[src], rampBackTime);
+    }
+
+    private IEnumerator ChangeAudioSourceVolume(AudioSource src, float targetVolume, float duration)
+    {
+        if (src == null) yield break;
+
         float elapsedTime = 0f;
         float currentVolume = src.volume;
-        float targetVolume = originalVolumes[src];
 
-        while (elapsedTime < rampBackTime)
+        while (elapsedTime < duration)
         {
-            if (src == null)
-            {
-                break;
-            }
-
+            src.volume = Mathf.Lerp(currentVolume, targetVolume, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
-            src.volume = Mathf.Lerp(currentVolume, targetVolume, elapsedTime / rampBackTime);
             yield return null;
         }
     }

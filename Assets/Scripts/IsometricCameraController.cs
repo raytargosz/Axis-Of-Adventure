@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class IsometricCameraController : MonoBehaviour
@@ -24,7 +23,6 @@ public class IsometricCameraController : MonoBehaviour
     public float scrollSFXVolume = 1f;
     public float sfxCooldown = 0.5f;
 
-
     private Vector3 currentVelocity;
     private Camera cam;
     private float targetRotationAngle;
@@ -45,60 +43,74 @@ public class IsometricCameraController : MonoBehaviour
     {
         if (target == null) return;
 
+        UpdateRotation();
+        UpdateZoom();
+    }
+
+    void LateUpdate()
+    {
+        UpdateCameraPositionAndRotation();
+    }
+
+    private void UpdateRotation()
+    {
         if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetMouseButtonDown(0))
         {
-            targetRotationAngle += 90f;
-            rotationStartTime = Time.time;
-            if (Time.time > lastSFXTime + sfxCooldown)
-            {
-                audioSource.PlayOneShot(rotateLeftSFX, rotationSFXVolume);
-                lastSFXTime = Time.time;
-            }
+            RotateLeft();
         }
         else if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetMouseButtonDown(1))
         {
-            targetRotationAngle -= 90f;
-            rotationStartTime = Time.time;
-            if (Time.time > lastSFXTime + sfxCooldown)
-            {
-                audioSource.PlayOneShot(rotateRightSFX, rotationSFXVolume);
-                lastSFXTime = Time.time;
-            }
+            RotateRight();
         }
+    }
 
+    private void RotateLeft()
+    {
+        targetRotationAngle += 90f;
+        rotationStartTime = Time.time;
+        PlaySFX(rotateLeftSFX, rotationSFXVolume);
+    }
+
+    private void RotateRight()
+    {
+        targetRotationAngle -= 90f;
+        rotationStartTime = Time.time;
+        PlaySFX(rotateRightSFX, rotationSFXVolume);
+    }
+
+    private void UpdateZoom()
+    {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
         {
             float oldFov = cam.fieldOfView;
             cam.fieldOfView = Mathf.Clamp(cam.fieldOfView - scroll * fovSpeed, minFov, maxFov);
-            if (Time.time > lastSFXTime + sfxCooldown && cam.fieldOfView != oldFov)
+            if (cam.fieldOfView != oldFov)
             {
-                if (scroll > 0f)
-                {
-                    audioSource.PlayOneShot(zoomInSFX, scrollSFXVolume);
-                }
-                else
-                {
-                    audioSource.PlayOneShot(zoomOutSFX, scrollSFXVolume);
-                }
-                lastSFXTime = Time.time;
+                PlaySFX(scroll > 0f ? zoomInSFX : zoomOutSFX, scrollSFXVolume);
             }
         }
     }
 
-    void LateUpdate()
+    private void PlaySFX(AudioClip clip, float volume)
     {
-        if (target != null)
+        if (Time.time > lastSFXTime + sfxCooldown)
         {
-            if (Time.time < rotationStartTime + rotationDuration)
-            {
-                rotationAngle = Mathf.LerpAngle(rotationAngle, targetRotationAngle, (Time.time - rotationStartTime) / rotationDuration);
-            }
-
-            Quaternion updatedTargetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
-            Vector3 updatedTargetPosition = target.position - updatedTargetRotation * Vector3.forward * distance + offset;
-            transform.position = Vector3.SmoothDamp(transform.position, updatedTargetPosition, ref currentVelocity, smoothingSpeed);
-            transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
+            audioSource.PlayOneShot(clip, volume);
+            lastSFXTime = Time.time;
         }
+    }
+
+    private void UpdateCameraPositionAndRotation()
+    {
+        if (Time.time < rotationStartTime + rotationDuration)
+        {
+            rotationAngle = Mathf.LerpAngle(rotationAngle, targetRotationAngle, (Time.time - rotationStartTime) / rotationDuration);
+        }
+
+        Quaternion updatedTargetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
+        Vector3 updatedTargetPosition = target.position - updatedTargetRotation * Vector3.forward * distance + offset;
+        transform.position = Vector3.SmoothDamp(transform.position, updatedTargetPosition, ref currentVelocity, smoothingSpeed);
+        transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
     }
 }

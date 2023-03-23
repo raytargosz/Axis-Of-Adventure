@@ -6,7 +6,6 @@ public class CombinedPlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckDistance = 0.1f;
     public float groundCheckRadius = 0.25f;
-    //public InputActionAsset controllerInput;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
@@ -24,7 +23,7 @@ public class CombinedPlayerController : MonoBehaviour
     public AudioClip landingSound;
 
     [Header("Falling Death")]
-    public float maxFallingTime = 3f; 
+    public float maxFallingTime = 3f;
     private float currentFallingTime = 0f;
 
     [SerializeField]
@@ -41,7 +40,6 @@ public class CombinedPlayerController : MonoBehaviour
 
     void Start()
     {
-        // Hide cursor in build
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -53,26 +51,40 @@ public class CombinedPlayerController : MonoBehaviour
 
     void Update()
     {
-        float bobbingObjectVerticalMovement = 0f;
-        if (isGrounded && bobbingObject != null && IsStandingOnBobbingObject())
-        {
-            bobbingObjectVerticalMovement = bobbingObject.GetVerticalMovement();
-        }
+        float bobbingObjectVerticalMovement = GetBobbingObjectVerticalMovement();
 
+        UpdateMoveDirection();
+        UpdateFallingDeath();
+        UpdateGroundedStatus();
+        UpdateJump();
+
+        controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.deltaTime);
+    }
+
+    private float GetBobbingObjectVerticalMovement()
+    {
+        return (isGrounded && bobbingObject != null && IsStandingOnBobbingObject())
+            ? bobbingObject.GetVerticalMovement()
+            : 0f;
+    }
+
+    private void UpdateMoveDirection()
+    {
         float horizontal = Input.GetAxis("Horizontal");
         Vector3 relativeDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, 0));
         relativeDirection.y = 0;
         relativeDirection.Normalize();
 
-        float currentSpeed = moveSpeed;
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-        {
-            currentSpeed = sprintSpeed;
-        }
+        float currentSpeed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
+            ? sprintSpeed
+            : moveSpeed;
 
-        moveDirection.x = relativeDirection.x * currentSpeed; 
+        moveDirection.x = relativeDirection.x * currentSpeed;
         moveDirection.z = relativeDirection.z * currentSpeed;
+    }
 
+    private void UpdateFallingDeath()
+    {
         if (!isGrounded && moveDirection.y < 0)
         {
             currentFallingTime += Time.deltaTime;
@@ -85,7 +97,11 @@ public class CombinedPlayerController : MonoBehaviour
         {
             currentFallingTime = 0f;
         }
+    }
 
+    private void UpdateGroundedStatus()
+    {
+        wasGrounded = isGrounded;
         isGrounded = IsGrounded();
 
         if (isGrounded && !wasGrounded)
@@ -97,23 +113,13 @@ public class CombinedPlayerController : MonoBehaviour
         {
             moveDirection.y = Mathf.Lerp(moveDirection.y, Physics.gravity.y, Time.deltaTime);
         }
+    }
 
+    private void UpdateJump()
+    {
         if (Input.GetButtonDown("Jump") && remainingJumps > 0)
         {
-            float jumpForce = (remainingJumps == 2) ? initialJumpForce : doubleJumpForce;
-            moveDirection.y = jumpForce;
-            remainingJumps--;
-
-            // Play jump sound
-            if (remainingJumps == 1 && jumpSound != null)
-            {
-                audioSource.PlayOneShot(jumpSound);
-            }
-            else if (remainingJumps == 0 && doubleJumpSound != null)
-            {
-                audioSource.PlayOneShot(doubleJumpSound);
-            }
-
+            PerformJump();
             jumpTime = maxJumpTime;
         }
         else if (Input.GetButton("Jump") && jumpTime > 0 && !isGrounded)
@@ -125,11 +131,24 @@ public class CombinedPlayerController : MonoBehaviour
         if (!wasGrounded && isGrounded && landingSound != null)
         {
             audioSource.PlayOneShot(landingSound);
-        }     
+        }
+    }
 
-        wasGrounded = isGrounded;
+    private void PerformJump()
+    {
+        float jumpForce = (remainingJumps == 2) ? initialJumpForce : doubleJumpForce;
+        moveDirection.y = jumpForce;
+        remainingJumps--;
 
-        controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.deltaTime);
+        // Play jump sound
+        if (remainingJumps == 1 && jumpSound != null)
+        {
+            audioSource.PlayOneShot(jumpSound);
+        }
+        else if (remainingJumps == 0 && doubleJumpSound != null)
+        {
+            audioSource.PlayOneShot(doubleJumpSound);
+        }
     }
 
     private bool IsGrounded()
@@ -161,7 +180,6 @@ public class CombinedPlayerController : MonoBehaviour
         return result;
     }
 
-
     private bool IsStandingOnBobbingObject()
     {
         RaycastHit hit;
@@ -175,5 +193,4 @@ public class CombinedPlayerController : MonoBehaviour
 
         return false;
     }
-
 }
