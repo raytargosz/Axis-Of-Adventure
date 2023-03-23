@@ -44,6 +44,17 @@ public class CombinedPlayerController : MonoBehaviour
     public float maxFallingTime = 3f;
     private float currentFallingTime = 0f;
 
+    [Header("Boost")]
+    [Tooltip("X-axis boost speed")]
+    public float xAxisBoostSpeed = 20f;
+    [Tooltip("Y-axis boost speed")]
+    public float yAxisBoostSpeed = 15f;
+    [Tooltip("Boost duration")]
+    public float boostDuration = 0.5f;
+
+    private float boostTimer;
+    private Vector3 boostDirection;
+
 
     [SerializeField]
     private PlayerDeath playerDeath;
@@ -78,6 +89,8 @@ public class CombinedPlayerController : MonoBehaviour
         UpdateJump();
 
         controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.deltaTime);
+
+        ApplyBoost();
     }
 
     private float GetBobbingObjectVerticalMovement()
@@ -220,5 +233,49 @@ public class CombinedPlayerController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Vector3 cameraRight = mainCamera.transform.right;
+        Vector3 cameraUp = mainCamera.transform.up;
+        Vector3 cameraForward = mainCamera.transform.forward;
+        cameraForward.y = 0; // Make sure the forward direction is only in the XZ plane
+        cameraForward.Normalize();
+
+        if (other.CompareTag("RedCube"))
+        {
+            boostDirection = -cameraRight * xAxisBoostSpeed; // Negate the direction to reverse the boost
+            boostTimer = boostDuration;
+        }
+        else if (other.CompareTag("BlueCube"))
+        {
+            boostDirection = cameraUp * yAxisBoostSpeed;
+            boostTimer = boostDuration;
+        }
+    }
+
+    private void ApplyBoost()
+    {
+        if (boostTimer > 0)
+        {
+            controller.Move(boostDirection * Time.deltaTime);
+            boostTimer -= Time.deltaTime;
+        }
+    }
+
+    public void ApplyBoost(Vector3 boost)
+    {
+        moveDirection += boost;
+    }
+
+    public Vector3 MoveDirection
+    {
+        get { return moveDirection; }
+    }
+
+    public void SetMoveDirection(Vector3 newMoveDirection)
+    {
+        moveDirection = newMoveDirection;
     }
 }
