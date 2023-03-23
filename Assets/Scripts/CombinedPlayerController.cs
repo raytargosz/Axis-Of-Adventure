@@ -8,27 +8,42 @@ public class CombinedPlayerController : MonoBehaviour
     public float groundCheckRadius = 0.25f;
 
     [Header("Movement")]
-    public float moveSpeed = 5f;
-    public float sprintSpeed = 10f;
+    [Tooltip("Character's movement speed")]
+    public float moveSpeed = 6f;
+    [Tooltip("Character's sprint speed")]
+    public float sprintSpeed = 9f;
+    [Tooltip("Character's acceleration rate")]
+    public float acceleration = 999f;
+    [Tooltip("Character's deceleration rate")]
+    public float deceleration = 28f;
 
     [Header("Jumping")]
-    public float initialJumpForce = 10f;
-    public float sustainedJumpForce = 5f;
-    public float maxJumpTime = 0.2f;
-    public float doubleJumpForce = 8f;
+    [Tooltip("Initial force of the first jump")]
+    public float initialJumpForce = 9f;
+    [Tooltip("Sustained force of the first jump while holding the jump button")]
+    public float sustainedJumpForce = 6f;
+    [Tooltip("Maximum duration the jump button can be held for sustained jump force")]
+    public float maxJumpTime = 0.5f;
+    [Tooltip("Force of the double jump")]
+    public float doubleJumpForce = 10f;
 
     [Header("Gravity")]
+    [Tooltip("Multiplier for the character's gravity")]
     public float gravityMultiplier = 2f;
 
-
     [Header("Audio")]
+    [Tooltip("Audio clip for the first jump")]
     public AudioClip jumpSound;
+    [Tooltip("Audio clip for the double jump")]
     public AudioClip doubleJumpSound;
+    [Tooltip("Audio clip for landing")]
     public AudioClip landingSound;
 
     [Header("Falling Death")]
+    [Tooltip("Maximum duration the character can fall before triggering death")]
     public float maxFallingTime = 3f;
     private float currentFallingTime = 0f;
+
 
     [SerializeField]
     private PlayerDeath playerDeath;
@@ -74,19 +89,21 @@ public class CombinedPlayerController : MonoBehaviour
 
     private void UpdateMoveDirection()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        Vector3 relativeDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, vertical));
-        relativeDirection.y = 0;
-        relativeDirection.Normalize();
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+        Vector3 targetDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, vertical));
+        targetDirection.y = 0;
+        targetDirection.Normalize();
 
-        float currentSpeed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
-            ? sprintSpeed
-            : moveSpeed;
+        float targetSpeed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? sprintSpeed : moveSpeed;
 
-        moveDirection.x = relativeDirection.x * currentSpeed;
-        moveDirection.z = relativeDirection.z * currentSpeed;
+        Vector3 targetVelocity = targetDirection * targetSpeed;
+        float accelerationRate = targetDirection.magnitude > 0 ? acceleration : deceleration;
+
+        moveDirection.x = Mathf.MoveTowards(moveDirection.x, targetVelocity.x, accelerationRate * Time.deltaTime);
+        moveDirection.z = Mathf.MoveTowards(moveDirection.z, targetVelocity.z, accelerationRate * Time.deltaTime);
     }
+
 
     private void UpdateFallingDeath()
     {
