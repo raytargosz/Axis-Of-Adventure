@@ -13,10 +13,14 @@ public class CombinedPlayerController : MonoBehaviour
     public float sprintSpeed = 10f;
 
     [Header("Jumping")]
-    public float initialJumpForce = 4f;
-    public float sustainedJumpForce = 2f;
+    public float initialJumpForce = 10f;
+    public float sustainedJumpForce = 5f;
     public float maxJumpTime = 0.2f;
-    public float doubleJumpForce = 5f;
+    public float doubleJumpForce = 8f;
+
+    [Header("Gravity")]
+    public float gravityMultiplier = 2f;
+
 
     [Header("Audio")]
     public AudioClip jumpSound;
@@ -140,7 +144,7 @@ public class CombinedPlayerController : MonoBehaviour
         }
         else if (!isGrounded)
         {
-            moveDirection.y = Mathf.Lerp(moveDirection.y, Physics.gravity.y, Time.deltaTime);
+            moveDirection.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
@@ -156,7 +160,7 @@ public class CombinedPlayerController : MonoBehaviour
             PerformJump();
             jumpTime = maxJumpTime;
         }
-        else if (Input.GetButton("Jump") && jumpTime > 0 && !isGrounded)
+        else if (Input.GetButton("Jump") && jumpTime > 0 && remainingJumps == 1)
         {
             moveDirection.y += sustainedJumpForce * Time.deltaTime;
             jumpTime -= Time.deltaTime;
@@ -167,6 +171,7 @@ public class CombinedPlayerController : MonoBehaviour
             audioSource.PlayOneShot(landingSound);
         }
     }
+
 
     private void PerformJump()
     {
