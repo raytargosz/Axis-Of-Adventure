@@ -98,7 +98,8 @@ public class CombinedPlayerController : MonoBehaviour
     private void UpdateMoveDirection()
     {
         float horizontal = Input.GetAxis("Horizontal");
-        Vector3 relativeDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, 0));
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 relativeDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, vertical));
         relativeDirection.y = 0;
         relativeDirection.Normalize();
 
@@ -145,6 +146,11 @@ public class CombinedPlayerController : MonoBehaviour
 
     private void UpdateJump()
     {
+        if (isGrounded)
+        {
+            remainingJumps = 2;
+        }
+
         if (Input.GetButtonDown("Jump") && remainingJumps > 0)
         {
             PerformJump();
