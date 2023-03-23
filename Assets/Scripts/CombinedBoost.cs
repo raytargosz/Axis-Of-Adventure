@@ -30,8 +30,13 @@ public class CombinedBoost : MonoBehaviour
     {
         _particleSystem = boostVFX.GetComponent<ParticleSystem>();
         UpdateParticleSystemDirection();
-        audioSource = GetComponent<AudioSource>();
+
+        // Create and configure the AudioSource
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1.0f; // 3D sound
     }
+
 
     private void Update()
     {

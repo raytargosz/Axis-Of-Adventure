@@ -240,16 +240,19 @@ public class CombinedPlayerController : MonoBehaviour
         if (other.CompareTag("RedCube"))
         {
             boostDirection = moveDirection.normalized * xAxisBoostSpeed;
+            boostDirection.y = 0; // Keep the current Y value
             boostTimer = boostDuration;
+            remainingJumps = 2; // Reset jump count
         }
         else if (other.CompareTag("BlueCube"))
         {
-            boostDirection = moveDirection.normalized * yAxisBoostSpeed;
+            boostDirection = Vector3.up * yAxisBoostSpeed;
+            boostDirection.x = 0; // Remove X momentum
+            boostDirection.z = 0; // Remove Z momentum
             boostTimer = boostDuration;
+            remainingJumps = 2; // Reset jump count
         }
     }
-
-
 
     private void ApplyBoost()
     {
