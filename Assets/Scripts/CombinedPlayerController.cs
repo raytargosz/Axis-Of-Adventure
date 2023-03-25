@@ -1,3 +1,10 @@
+/*
+ * CombinedPlayerController is a script that handles player movement, jumping, gravity, and falling death for a 3D platformer game.
+ * This script also manages camera switching between the isometric and first-person views.
+ * To use this script, attach it to the player character in your scene and configure the public variables as needed.
+ */
+
+
 using UnityEngine;
 
 public class CombinedPlayerController : MonoBehaviour
@@ -52,6 +59,16 @@ public class CombinedPlayerController : MonoBehaviour
     [Tooltip("Boost duration")]
     public float boostDuration = 0.5f;
 
+    [Header("First Person Camera")]
+    [Tooltip("Camera object for first-person view")]
+    public Camera firstPersonCamera;
+    [Tooltip("Mouse sensitivity for the first-person camera")]
+    public float mouseSensitivity = 100f;
+    private bool firstPersonMode = false;
+    private float xRotation = 0f;
+    public IsometricCameraController isometricCameraController;
+
+
     private float boostTimer;
     private Vector3 boostDirection;
 
@@ -77,10 +94,17 @@ public class CombinedPlayerController : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         remainingJumps = 2;
         wasGrounded = true;
+
+        firstPersonCamera.enabled = false;
     }
 
     void Update()
     {
+        if (firstPersonMode)
+        {
+            UpdateFirstPersonCamera();
+        }
+
         float bobbingObjectVerticalMovement = GetBobbingObjectVerticalMovement();
 
         UpdateMoveDirection();
@@ -252,6 +276,11 @@ public class CombinedPlayerController : MonoBehaviour
             boostTimer = boostDuration;
             remainingJumps = 2; // Reset jump count
         }
+
+        if (other.CompareTag("FirstPersonZone"))
+        {
+            ToggleFirstPersonMode();
+        }
     }
 
     private void ApplyBoost()
@@ -271,5 +300,36 @@ public class CombinedPlayerController : MonoBehaviour
     public void SetMoveDirection(Vector3 newMoveDirection)
     {
         moveDirection = newMoveDirection;
+    }
+    // New method for updating the first-person camera
+    private void UpdateFirstPersonCamera()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        firstPersonCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.Rotate(Vector3.up * mouseX);
+    }
+
+    // New method for toggling the first-person camera mode
+    private void ToggleFirstPersonMode()
+    {
+        firstPersonMode = !firstPersonMode;
+        mainCamera.enabled = !firstPersonMode;
+        firstPersonCamera.enabled = firstPersonMode;
+
+        if (firstPersonMode)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 }

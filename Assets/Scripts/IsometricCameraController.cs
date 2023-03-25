@@ -1,3 +1,10 @@
+/*
+ * IsometricCameraController controls the camera's position, rotation, and zoom in an isometric view.
+ * This script also handles switching between the isometric camera and the first-person camera when the player enters or exits specific zones.
+ * To use this script, attach it to the main camera in your scene and configure the public variables as needed.
+ */
+
+
 using UnityEngine;
 
 public class IsometricCameraController : MonoBehaviour
@@ -22,6 +29,7 @@ public class IsometricCameraController : MonoBehaviour
     public float rotationSFXVolume = 1f;
     public float scrollSFXVolume = 1f;
     public float sfxCooldown = 0.5f;
+    public Camera firstPersonCamera;
 
     private Vector3 currentVelocity;
     private Camera cam;
@@ -29,6 +37,8 @@ public class IsometricCameraController : MonoBehaviour
     private float rotationStartTime;
     private AudioSource audioSource;
     private float lastSFXTime;
+    private bool inFirstPersonZone = false;
+
 
     void Start()
     {
@@ -112,5 +122,35 @@ public class IsometricCameraController : MonoBehaviour
         Vector3 updatedTargetPosition = target.position - updatedTargetRotation * Vector3.forward * distance + offset;
         transform.position = Vector3.SmoothDamp(transform.position, updatedTargetPosition, ref currentVelocity, smoothingSpeed);
         transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    public void ToggleIsometricCameraMode()
+    {
+        // Enable or disable the Isometric Camera Controller script
+        this.enabled = !this.enabled;
+    }
+
+
+    private void ToggleFirstPersonZone(bool enableFirstPerson)
+    {
+        inFirstPersonZone = enableFirstPerson;
+        firstPersonCamera.gameObject.SetActive(inFirstPersonZone);
+        cam.gameObject.SetActive(!inFirstPersonZone);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("FirstPersonZone"))
+        {
+            ToggleFirstPersonZone(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("FirstPersonZone"))
+        {
+            ToggleFirstPersonZone(false);
+        }
     }
 }
