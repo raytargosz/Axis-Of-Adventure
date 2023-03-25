@@ -148,6 +148,10 @@ public class IsometricCameraController : MonoBehaviour
 
     public void ToggleFirstPersonZone(bool enableFirstPerson)
     {
+        if (!enableFirstPerson && !this.enabled)
+        {
+            this.enabled = true;
+        }
         StartCoroutine(CameraTransition(enableFirstPerson));
     }
 
@@ -184,10 +188,19 @@ public class IsometricCameraController : MonoBehaviour
         }
 
         inFirstPersonZone = enableFirstPerson;
-        firstPersonCamera.gameObject.SetActive(inFirstPersonZone);
-        cam.gameObject.SetActive(!inFirstPersonZone);
 
-        ToggleIsometricCameraMode(); 
+        // Enable/disable the Camera components instead of the game objects
+        firstPersonCamera.GetComponent<Camera>().enabled = inFirstPersonZone;
+        cam.enabled = !inFirstPersonZone;
+
+        // Disable the IsometricCameraController script when in the first-person zone
+        this.enabled = !inFirstPersonZone;
+
+        // If not in the first-person zone, move the IsoCamera back to its original position
+        if (!inFirstPersonZone)
+        {
+            transform.position = initialPosition;
+        }
     }
 
     // Swoop in the camera
@@ -208,6 +221,11 @@ public class IsometricCameraController : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, initialPosition, cameraSwoopSpeed * Time.deltaTime);
             yield return null;
         }
+    }
+
+    public void EnableFirstPersonCamera(bool enable)
+    {
+        firstPersonCamera.gameObject.SetActive(enable);
     }
 
     private void OnTriggerEnter(Collider other)
