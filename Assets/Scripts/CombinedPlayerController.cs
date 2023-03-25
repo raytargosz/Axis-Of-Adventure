@@ -100,9 +100,50 @@ public class CombinedPlayerController : MonoBehaviour
 
     void Update()
     {
-        if (firstPersonMode)
+        // Get input from WASD keys
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        // Check if the first-person camera is active
+        if (firstPersonCamera.enabled)
         {
-            UpdateFirstPersonCamera();
+            // Calculate the movement direction based on the camera's orientation
+            Vector3 forward = firstPersonCamera.transform.forward;
+            Vector3 right = firstPersonCamera.transform.right;
+
+            // Remove the Y component to keep movement on a flat plane
+            forward.y = 0;
+            right.y = 0;
+
+            // Normalize the vectors to avoid faster diagonal movement
+            forward.Normalize();
+            right.Normalize();
+
+            // Calculate the final movement vector
+            Vector3 movement = (forward * vertical + right * horizontal) * moveSpeed * Time.deltaTime;
+
+            // Apply the movement to the character
+            controller.Move(movement);
+        }
+        else
+        {
+            // Calculate the movement direction based on the main camera's orientation
+            Vector3 forward = mainCamera.transform.forward;
+            Vector3 right = mainCamera.transform.right;
+
+            // Remove the Y component to keep movement on a flat plane
+            forward.y = 0;
+            right.y = 0;
+
+            // Normalize the vectors to avoid faster diagonal movement
+            forward.Normalize();
+            right.Normalize();
+
+            // Calculate the final movement vector
+            Vector3 movement = (forward * vertical + right * horizontal) * moveSpeed * Time.deltaTime;
+
+            // Apply the movement to the character
+            controller.Move(movement);
         }
 
         float bobbingObjectVerticalMovement = GetBobbingObjectVerticalMovement();
@@ -116,6 +157,7 @@ public class CombinedPlayerController : MonoBehaviour
 
         ApplyBoost();
     }
+
 
     private float GetBobbingObjectVerticalMovement()
     {

@@ -53,13 +53,19 @@ public class IsometricCameraController : MonoBehaviour
     {
         if (target == null) return;
 
-        UpdateRotation();
-        UpdateZoom();
+        if (!firstPersonCamera.gameObject.activeInHierarchy)
+        {
+            UpdateRotation();
+            UpdateZoom();
+        }
     }
 
     void LateUpdate()
     {
-        UpdateCameraPositionAndRotation();
+        if (!firstPersonCamera.gameObject.activeInHierarchy)
+        {
+            UpdateCameraPositionAndRotation();
+        }
     }
 
     private void UpdateRotation()
@@ -122,6 +128,7 @@ public class IsometricCameraController : MonoBehaviour
         Vector3 updatedTargetPosition = target.position - updatedTargetRotation * Vector3.forward * distance + offset;
         transform.position = Vector3.SmoothDamp(transform.position, updatedTargetPosition, ref currentVelocity, smoothingSpeed);
         transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
+        transform.LookAt(target);
     }
 
     public void ToggleIsometricCameraMode()
