@@ -5,6 +5,7 @@
  */
 
 
+using System.Collections;
 using UnityEngine;
 
 public class CombinedPlayerController : MonoBehaviour
@@ -66,7 +67,7 @@ public class CombinedPlayerController : MonoBehaviour
     public float mouseSensitivity = 100f;
     private bool firstPersonMode = false;
     private float xRotation = 0f;
-    public IsometricCameraController isometricCameraController;
+    //public IsometricCameraController isometricCameraController;
 
     [Header("Mesh Renderer")]
     [Tooltip("Player's mesh renderers")]
@@ -91,6 +92,7 @@ public class CombinedPlayerController : MonoBehaviour
     private bool isCursorVisible = false;
 
     public Texture2D customCursorTexture;
+    public IsometricCameraController isometricCameraController;
 
     void SetCustomCursor(Texture2D cursorTexture)
     {
@@ -331,7 +333,6 @@ public class CombinedPlayerController : MonoBehaviour
 
         return false;
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("RedCube"))
@@ -349,15 +350,13 @@ public class CombinedPlayerController : MonoBehaviour
             boostTimer = boostDuration;
             remainingJumps = 2; // Reset jump count
         }
-
-        if (other.CompareTag("FirstPersonZone"))
+        else if (other.CompareTag("FirstPersonZone"))
         {
-            ToggleFirstPersonMode();
-            isometricCameraController.ToggleFirstPersonZone(true);
+            StartCoroutine(ToggleFirstPersonMode());
         }
     }
 
-    private void ApplyBoost()
+private void ApplyBoost()
     {
         if (boostTimer > 0)
         {
@@ -389,11 +388,12 @@ public class CombinedPlayerController : MonoBehaviour
     }
 
     // New method for toggling the first-person camera mode
-    private void ToggleFirstPersonMode()
+    IEnumerator ToggleFirstPersonMode()
     {
+        //Debug.Log("Toggling first-person mode");
+
         firstPersonMode = !firstPersonMode;
-        mainCamera.enabled = !firstPersonMode;
-        firstPersonCamera.enabled = firstPersonMode;
+        isometricCameraController.ToggleFirstPersonZone(firstPersonMode);
 
         // Enable/disable the player's mesh renderers
         foreach (MeshRenderer meshRenderer in playerMeshRenderers)
@@ -403,13 +403,25 @@ public class CombinedPlayerController : MonoBehaviour
 
         if (firstPersonMode)
         {
+            // Swoop in the isometric camera
+            yield return StartCoroutine(isometricCameraController.SwoopIn());
+
+            // Disable the isometric camera and enable the FPS camera
+            isometricCameraController.enabled = false;
+            firstPersonCamera.enabled = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
+            // Swoop out the isometric camera
+            yield return StartCoroutine(isometricCameraController.SwoopOut());
+
+            // Disable the FPS camera and enable the isometric camera
+            isometricCameraController.enabled = true;
+            firstPersonCamera.enabled = false;
             Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.visible = false;
             transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Reset player's rotation
         }
     }
@@ -418,8 +430,7 @@ public class CombinedPlayerController : MonoBehaviour
     {
         if (other.CompareTag("FirstPersonZone"))
         {
-            ToggleFirstPersonMode();
-            isometricCameraController.ToggleFirstPersonZone(false);
+            StartCoroutine(ToggleFirstPersonMode());
         }
     }
 }

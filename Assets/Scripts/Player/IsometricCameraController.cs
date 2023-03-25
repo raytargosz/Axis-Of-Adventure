@@ -5,10 +5,22 @@
  */
 
 
+using System.Collections;
 using UnityEngine;
 
 public class IsometricCameraController : MonoBehaviour
 {
+    // The cameraSwoopSpeed variable
+    [Header("Camera Swooping")]
+    [Tooltip("Speed of the camera swooping in and out")]
+    public float cameraSwoopSpeed = 5f;
+
+    // The swoopInDistance variable
+    [Tooltip("Distance for the camera to swoop in")]
+    public float swoopInDistance = 2f;
+
+    private Vector3 initialPosition;
+
     public Transform target;
     public Vector3 offset;
     public float rotationSpeed = 100f;
@@ -47,6 +59,9 @@ public class IsometricCameraController : MonoBehaviour
         rotationStartTime = -rotationDuration;
         audioSource = GetComponent<AudioSource>();
         lastSFXTime = Time.time;
+
+        // Store the initial position of the camera
+        initialPosition = transform.position;
     }
 
     void Update()
@@ -133,9 +148,66 @@ public class IsometricCameraController : MonoBehaviour
 
     public void ToggleFirstPersonZone(bool enableFirstPerson)
     {
+        StartCoroutine(CameraTransition(enableFirstPerson));
+    }
+
+    IEnumerator CameraTransition(bool enableFirstPerson)
+    {
+        float transitionDuration = 1f;
+        float elapsedTime = 0f;
+
+        Vector3 initialCameraPosition = transform.position;
+        Quaternion initialCameraRotation = transform.rotation;
+
+        Vector3 targetCameraPosition;
+        Quaternion targetCameraRotation;
+
+        if (enableFirstPerson)
+        {
+            targetCameraPosition = firstPersonCamera.transform.position;
+            targetCameraRotation = firstPersonCamera.transform.rotation;
+        }
+        else
+        {
+            targetCameraPosition = target.position - initialCameraRotation * Vector3.forward * distance + offset;
+            targetCameraRotation = initialCameraRotation;
+        }
+
+        while (elapsedTime < transitionDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            transform.position = Vector3.Lerp(initialCameraPosition, targetCameraPosition, elapsedTime / transitionDuration);
+            transform.rotation = Quaternion.Lerp(initialCameraRotation, targetCameraRotation, elapsedTime / transitionDuration);
+
+            yield return null;
+        }
+
         inFirstPersonZone = enableFirstPerson;
         firstPersonCamera.gameObject.SetActive(inFirstPersonZone);
         cam.gameObject.SetActive(!inFirstPersonZone);
+
+        ToggleIsometricCameraMode(); 
+    }
+
+    // Swoop in the camera
+    public IEnumerator SwoopIn()
+    {
+        while (Vector3.Distance(transform.position, target.position) > swoopInDistance)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target.position, cameraSwoopSpeed * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    // Swoop out the camera
+    public IEnumerator SwoopOut()
+    {
+        while (Vector3.Distance(transform.position, initialPosition) > 0.1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, initialPosition, cameraSwoopSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
