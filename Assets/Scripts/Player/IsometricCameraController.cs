@@ -66,6 +66,7 @@ public class IsometricCameraController : MonoBehaviour
     private AudioSource audioSource;
     private float lastSFXTime;
     private bool inFirstPersonZone = false;
+    private Vector3 lastIsometricPosition;
 
     void Start()
     {
@@ -183,12 +184,13 @@ public class IsometricCameraController : MonoBehaviour
 
         if (enableFirstPerson)
         {
+            lastIsometricPosition = transform.position;
             targetCameraPosition = firstPersonCamera.transform.position;
             targetCameraRotation = firstPersonCamera.transform.rotation;
         }
         else
         {
-            targetCameraPosition = target.position - initialCameraRotation * Vector3.forward * distance + offset;
+            targetCameraPosition = lastIsometricPosition;
             targetCameraRotation = initialCameraRotation;
         }
 
@@ -261,7 +263,7 @@ public class IsometricCameraController : MonoBehaviour
         float elapsedTime = 0f;
 
         Vector3 initialCameraPosition = transform.position;
-        Vector3 targetCameraPosition = initialPosition;
+        Vector3 targetCameraPosition = lastIsometricPosition;
 
         while (elapsedTime < swoopDuration)
         {
@@ -302,6 +304,7 @@ public class IsometricCameraController : MonoBehaviour
         if (other.CompareTag("FirstPersonZone"))
         {
             ToggleFirstPersonZone(true);
+            EnableFirstPersonCamera(true);
         }
     }
 
@@ -310,6 +313,7 @@ public class IsometricCameraController : MonoBehaviour
         if (other.CompareTag("FirstPersonZone"))
         {
             ToggleFirstPersonZone(false);
+            EnableFirstPersonCamera(false);
         }
     }
 }
