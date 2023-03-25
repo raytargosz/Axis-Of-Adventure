@@ -10,17 +10,16 @@ using UnityEngine;
 
 public class IsometricCameraController : MonoBehaviour
 {
-    // The cameraSwoopSpeed variable
     [Header("Camera Swooping")]
     [Tooltip("Speed of the camera swooping in and out")]
     public float cameraSwoopSpeed = 5f;
 
-    // The swoopInDistance variable
     [Tooltip("Distance for the camera to swoop in")]
     public float swoopInDistance = 2f;
 
     private Vector3 initialPosition;
 
+    [Header("Camera Settings")]
     public Transform target;
     public Vector3 offset;
     public float rotationSpeed = 100f;
@@ -34,6 +33,8 @@ public class IsometricCameraController : MonoBehaviour
     public float maxFov = 60f;
     public float fovSpeed = 10f;
     public float rotationDuration = 1f;
+
+    [Header("Audio")]
     public AudioClip rotateLeftSFX;
     public AudioClip rotateRightSFX;
     public AudioClip zoomInSFX;
@@ -41,6 +42,8 @@ public class IsometricCameraController : MonoBehaviour
     public float rotationSFXVolume = 1f;
     public float scrollSFXVolume = 1f;
     public float sfxCooldown = 0.5f;
+
+    [Header("First Person Camera")]
     public Camera firstPersonCamera;
 
     private Vector3 currentVelocity;
@@ -50,7 +53,6 @@ public class IsometricCameraController : MonoBehaviour
     private AudioSource audioSource;
     private float lastSFXTime;
     private bool inFirstPersonZone = false;
-
 
     void Start()
     {
