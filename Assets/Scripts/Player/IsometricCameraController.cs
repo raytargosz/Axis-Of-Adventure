@@ -10,8 +10,17 @@ using UnityEngine;
 
 public class IsometricCameraController : MonoBehaviour
 {
-    // Camera target and movement settings
-    [Header("Camera Movement Settings")]
+    // The cameraSwoopSpeed variable
+    [Header("Camera Swooping")]
+    [Tooltip("Speed of the camera swooping in and out")]
+    public float cameraSwoopSpeed = 5f;
+
+    // The swoopInDistance variable
+    [Tooltip("Distance for the camera to swoop in")]
+    public float swoopInDistance = 2f;
+
+    private Vector3 initialPosition;
+
     public Transform target;
     public Vector3 offset;
     public float rotationSpeed = 100f;
@@ -21,44 +30,19 @@ public class IsometricCameraController : MonoBehaviour
     public float minDistance = 5f;
     public float maxDistance = 15f;
     public float distance = 10f;
-
-    // Camera zoom settings
-    [Header("Camera Zoom Settings")]
     public float minFov = 30f;
     public float maxFov = 60f;
     public float fovSpeed = 10f;
-
-    // Camera rotation settings
-    [Header("Camera Rotation Settings")]
     public float rotationDuration = 1f;
     public AudioClip rotateLeftSFX;
     public AudioClip rotateRightSFX;
-    public float rotationSFXVolume = 1f;
-    public float sfxCooldown = 0.5f;
-
-    // Camera swooping settings
-    [Header("Camera Swooping")]
-    [Tooltip("Enable or disable camera swooping effects")]
-    public bool enableCameraSwoops = true;
-
-    [Tooltip("Speed of the camera swooping in and out")]
-    public float cameraSwoopSpeed = 5f;
-
-    [Tooltip("Distance for the camera to swoop in")]
-    public float swoopInDistance = 2f;
-
-    // Camera scroll sound effects settings
-    [Header("Camera Scroll Sound Effects")]
     public AudioClip zoomInSFX;
     public AudioClip zoomOutSFX;
+    public float rotationSFXVolume = 1f;
     public float scrollSFXVolume = 1f;
-
-    // First-person camera settings
-    [Header("First-Person Camera")]
+    public float sfxCooldown = 0.5f;
     public Camera firstPersonCamera;
 
-    // Private variables
-    private Vector3 initialPosition;
     private Vector3 currentVelocity;
     private Camera cam;
     private float targetRotationAngle;
@@ -66,6 +50,7 @@ public class IsometricCameraController : MonoBehaviour
     private AudioSource audioSource;
     private float lastSFXTime;
     private bool inFirstPersonZone = false;
+
 
     void Start()
     {
@@ -216,61 +201,7 @@ public class IsometricCameraController : MonoBehaviour
         {
             transform.position = initialPosition;
         }
-
-        inFirstPersonZone = enableFirstPerson;
-
-        // Enable/disable the Camera components instead of the game objects
-        firstPersonCamera.GetComponent<Camera>().enabled = inFirstPersonZone;
-        cam.enabled = !inFirstPersonZone;
-
-        // Disable the IsometricCameraController script when in the first-person zone
-        this.enabled = !inFirstPersonZone;
-
-        if (!inFirstPersonZone)
-        {
-            // Start the swooping effect after the FPS camera is disabled
-            StartCoroutine(SwoopToInitialPosition());
-        }
-        inFirstPersonZone = enableFirstPerson;
-
-        // Enable/disable the Camera components instead of the game objects
-        firstPersonCamera.GetComponent<Camera>().enabled = inFirstPersonZone;
-        cam.enabled = !inFirstPersonZone;
-
-        // Disable the IsometricCameraController script when in the first-person zone
-        this.enabled = !inFirstPersonZone;
-
-        if (enableCameraSwoops)
-        {
-            if (!inFirstPersonZone)
-            {
-                // Start the swooping effect after the FPS camera is disabled
-                StartCoroutine(SwoopToInitialPosition());
-            }
-            else
-            {
-                // Swoop in when entering the first-person zone
-                StartCoroutine(SwoopIn());
-            }
-        }
     }
-
-    IEnumerator SwoopToInitialPosition()
-    {
-        float swoopDuration = 1f;
-        float elapsedTime = 0f;
-
-        Vector3 initialCameraPosition = transform.position;
-        Vector3 targetCameraPosition = initialPosition;
-
-        while (elapsedTime < swoopDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            transform.position = Vector3.Lerp(initialCameraPosition, targetCameraPosition, elapsedTime / swoopDuration);
-            yield return null;
-        }
-    }
-
 
     // Swoop in the camera
     public IEnumerator SwoopIn()

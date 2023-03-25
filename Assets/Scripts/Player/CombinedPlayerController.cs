@@ -10,7 +10,6 @@ using UnityEngine;
 
 public class CombinedPlayerController : MonoBehaviour
 {
-    [Header("Main Camera and Ground Check")]
     public Camera mainCamera;
     public LayerMask groundLayer;
     public float groundCheckDistance = 0.1f;
@@ -68,16 +67,19 @@ public class CombinedPlayerController : MonoBehaviour
     public float mouseSensitivity = 100f;
     private bool firstPersonMode = false;
     private float xRotation = 0f;
+    //public IsometricCameraController isometricCameraController;
 
     [Header("Mesh Renderer")]
     [Tooltip("Player's mesh renderers")]
     public MeshRenderer[] playerMeshRenderers;
 
-    // Private variables
     private float boostTimer;
     private Vector3 boostDirection;
+
+
     [SerializeField]
     private PlayerDeath playerDeath;
+
     private AudioSource audioSource;
     private CharacterController controller;
     private Vector3 moveDirection;
@@ -89,10 +91,7 @@ public class CombinedPlayerController : MonoBehaviour
     private bool isMenuActive = false;
     private bool isCursorVisible = false;
 
-    [Header("Custom Cursor Texture")]
     public Texture2D customCursorTexture;
-
-    [Header("Isometric Camera Controller")]
     public IsometricCameraController isometricCameraController;
 
     void SetCustomCursor(Texture2D cursorTexture)
