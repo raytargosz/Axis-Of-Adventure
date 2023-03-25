@@ -6,15 +6,22 @@ using UnityEngine;
 public class MusicManager : MonoBehaviour
 {
     public AudioClip[] musicTracks;
+    public float[] trackWeights; // Add this array to store the weights for each track
     public float fadeInTime = 2f;
     public float fadeOutTime = 2f;
-    public float fixedTrackVolume = 1f; // Add this line to set a fixed track volume
+    public float fixedTrackVolume = 1f;
 
     private AudioSource audioSource;
     private List<AudioClip> playlist;
 
     void Start()
     {
+        if (musicTracks.Length != trackWeights.Length)
+        {
+            Debug.LogError("Music tracks and track weights arrays must have the same length.");
+            return;
+        }
+
         audioSource = GetComponent<AudioSource>();
         playlist = new List<AudioClip>(musicTracks);
         StartCoroutine(PlayShuffledMusic());
@@ -29,7 +36,7 @@ public class MusicManager : MonoBehaviour
                 playlist.AddRange(musicTracks);
             }
 
-            int randomIndex = Random.Range(0, playlist.Count);
+            int randomIndex = GetRandomWeightedIndex(trackWeights);
             AudioClip selectedClip = playlist[randomIndex];
             playlist.RemoveAt(randomIndex);
 
@@ -45,6 +52,29 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+    private int GetRandomWeightedIndex(float[] weights)
+    {
+        float totalWeight = 0;
+        foreach (float weight in weights)
+        {
+            totalWeight += weight;
+        }
+
+        float randomValue = Random.Range(0, totalWeight);
+        float currentWeight = 0;
+
+        for (int i = 0; i < weights.Length; i++)
+        {
+            currentWeight += weights[i];
+            if (randomValue < currentWeight)
+            {
+                return i;
+            }
+        }
+
+        return weights.Length - 1;
+    }
+
     private IEnumerator FadeIn(float time)
     {
         float elapsedTime = 0f;
@@ -52,7 +82,7 @@ public class MusicManager : MonoBehaviour
         while (elapsedTime < time)
         {
             elapsedTime += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(0f, fixedTrackVolume, elapsedTime / time); // Apply the fixedTrackVolume here
+            audioSource.volume = Mathf.Lerp(0f, fixedTrackVolume, elapsedTime / time);
             yield return null;
         }
     }
@@ -64,7 +94,7 @@ public class MusicManager : MonoBehaviour
         while (elapsedTime < time)
         {
             elapsedTime += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(fixedTrackVolume, 0f, elapsedTime / time); // Apply the fixedTrackVolume here
+            audioSource.volume = Mathf.Lerp(fixedTrackVolume, 0f, elapsedTime / time);
             yield return null;
         }
     }

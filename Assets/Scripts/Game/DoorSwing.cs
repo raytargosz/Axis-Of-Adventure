@@ -1,11 +1,25 @@
+// This script controls door swinging behavior, opening the door when the player enters its trigger area.
+// To use this script:
+// 1. Attach this script to a door GameObject.
+// 2. Make sure the door GameObject has a Collider component set as a trigger.
+// 3. Make sure the player GameObject has the "Player" tag assigned.
+// 4. Set the rotationSpeed, openAngle, doorOpenSound, and openSoundVolume fields in the Unity Inspector.
+
 using System.Collections;
 using UnityEngine;
 
 public class DoorSwing : MonoBehaviour
 {
+    [Tooltip("Speed of the door rotation when opening.")]
     public float rotationSpeed = 2f;
+
+    [Tooltip("Angle in degrees the door will rotate when opening.")]
     public float openAngle = 90f;
+
+    [Tooltip("AudioClip to play when the door opens.")]
     public AudioClip doorOpenSound;
+
+    [Tooltip("Volume of the door open sound. Range: 0 to 1.")]
     [Range(0, 1)] public float openSoundVolume = 1f;
 
     private AudioSource audioSource;
