@@ -280,6 +280,7 @@ public class CombinedPlayerController : MonoBehaviour
         if (other.CompareTag("FirstPersonZone"))
         {
             ToggleFirstPersonMode();
+            isometricCameraController.ToggleFirstPersonZone(true);
         }
     }
 
@@ -330,6 +331,15 @@ public class CombinedPlayerController : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("FirstPersonZone"))
+        {
+            ToggleFirstPersonMode();
+            isometricCameraController.ToggleFirstPersonZone(false);
         }
     }
 }

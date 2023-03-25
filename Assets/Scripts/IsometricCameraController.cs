@@ -131,7 +131,7 @@ public class IsometricCameraController : MonoBehaviour
     }
 
 
-    private void ToggleFirstPersonZone(bool enableFirstPerson)
+    public void ToggleFirstPersonZone(bool enableFirstPerson)
     {
         inFirstPersonZone = enableFirstPerson;
         firstPersonCamera.gameObject.SetActive(inFirstPersonZone);
