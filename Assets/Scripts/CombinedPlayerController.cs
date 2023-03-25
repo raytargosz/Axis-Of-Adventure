@@ -68,6 +68,10 @@ public class CombinedPlayerController : MonoBehaviour
     private float xRotation = 0f;
     public IsometricCameraController isometricCameraController;
 
+    [Header("Mesh Renderer")]
+    [Tooltip("Player's mesh renderer")]
+    public MeshRenderer playerMeshRenderer;
+
 
     private float boostTimer;
     private Vector3 boostDirection;
@@ -128,9 +132,28 @@ public class CombinedPlayerController : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-        Vector3 targetDirection = mainCamera.transform.TransformDirection(new Vector3(horizontal, 0, vertical));
-        targetDirection.y = 0;
-        targetDirection.Normalize();
+
+        Vector3 targetDirection;
+
+        if (firstPersonMode)
+        {
+            Vector3 forward = firstPersonCamera.transform.forward;
+            Vector3 right = firstPersonCamera.transform.right;
+            forward.y = 0;
+            right.y = 0;
+            forward.Normalize();
+            right.Normalize();
+
+            targetDirection = (forward * vertical + right * horizontal).normalized;
+        }
+        else
+        {
+            Vector3 cameraRight = mainCamera.transform.right;
+            cameraRight.y = 0;
+            cameraRight.Normalize();
+
+            targetDirection = cameraRight * horizontal;
+        }
 
         float targetSpeed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? sprintSpeed : moveSpeed;
 
@@ -321,6 +344,9 @@ public class CombinedPlayerController : MonoBehaviour
         firstPersonMode = !firstPersonMode;
         mainCamera.enabled = !firstPersonMode;
         firstPersonCamera.enabled = firstPersonMode;
+
+        // Enable/disable the player's mesh renderer
+        playerMeshRenderer.enabled = !firstPersonMode;
 
         if (firstPersonMode)
         {
