@@ -357,6 +357,7 @@ public class CombinedPlayerController : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Reset player's rotation
         }
     }
 
