@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 public class CollectibleManager : MonoBehaviour
 {
@@ -47,6 +48,7 @@ public class CollectibleManager : MonoBehaviour
 
     public static int CollectibleCount { get; private set; }
     public int RequiredPickupAmount => requiredPickupAmount;
+    public event Action OnCollectiblePicked;
 
     private void Start()
     {
@@ -69,6 +71,7 @@ public class CollectibleManager : MonoBehaviour
     {
         CollectibleCount++;
         UpdateCollectibleCounterText();
+        OnCollectiblePicked?.Invoke();
     }
 
     private void UpdateCollectibleCounterText()
