@@ -1,8 +1,12 @@
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 public class CameraSwoop : MonoBehaviour
 {
+    [Header("Camera Settings")]
     [Tooltip("The main camera that will be moved during the swoop")]
     [SerializeField] private Camera mainCamera;
 
@@ -39,22 +43,39 @@ public class CameraSwoop : MonoBehaviour
 
     [SerializeField] private IsometricCameraController isoCamController;
 
+    [Header("Tutorial Settings")]
+    [SerializeField] private List<TutorialInfo> tutorials = new List<TutorialInfo>();
+
+    [System.Serializable]
+    public class TutorialInfo
+    {
+        [Tooltip("Tutorial text to display")]
+        public TMP_Text tutorialText;
+
+        [Tooltip("Required buttons to press to continue")]
+        public KeyCode[] requiredButtons = { KeyCode.Space };
+
+        [Tooltip("SFX to play when the tutorial text comes up")]
+        public AudioClip sfx;
+
+        [Tooltip("Volume of the tutorial SFX")]
+        [Range(0, 1)]
+        public float volume = 1f;
+    }
+
+    private int currentTutorial = 0;
+    private bool tutorialActive = false;
     private float startTime;
     private bool isSwooping;
 
-    public bool IsSwooping
-    {
-        get { return isSwooping; }
-    }
+    public bool IsSwooping => isSwooping;
 
     private void Start()
     {
-        // Set the camera's starting position and start time
         mainCamera.transform.position = startPosition + cameraOffset;
         startTime = Time.time;
         isSwooping = true;
 
-        // Play the swoop audio clip
         audioSource.clip = swoopAudioClip;
         audioSource.volume = audioVolume;
         audioSource.Play();
@@ -66,13 +87,10 @@ public class CameraSwoop : MonoBehaviour
     {
         if (isSwooping)
         {
-            // Calculate the progress of the swoop animation
             float swoopProgress = (Time.time - startTime) / swoopDuration;
 
-            // Make the camera look at the player
             mainCamera.transform.LookAt(playerTransform);
 
-            // Fade out the panel's alpha during the swoop
             if (panel != null)
             {
                 float fadeProgress = (Time.time - startTime) / fadeDuration;
@@ -82,42 +100,65 @@ public class CameraSwoop : MonoBehaviour
                 panel.color = panelColor;
             }
 
-            // Move the camera towards the end position using linear interpolation
             mainCamera.transform.position = Vector3.Lerp(startPosition + cameraOffset, endPosition + cameraOffset, swoopProgress);
-
-            // Make the camera look at the player
-            mainCamera.transform.LookAt(playerTransform);
-
-            // Fade out the panel's alpha during the swoop
-            if (panel != null)
-            {
-                float fadeProgress = (Time.time - startTime) / fadeDuration;
-                Color panelColor = panel.color;
-                panelColor.a = Mathf.Lerp(225f / 255f, 0, fadeProgress);
-                panel.color = panelColor;
-            }
 
             if (swoopProgress >= 1f)
             {
-                // Swoop animation is finished
                 mainCamera.transform.position = endPosition + cameraOffset;
                 isSwooping = false;
                 isoCamController.enabled = true;
+                StartCoroutine(ActivateTutorialWithDelay(3f));
             }
         }
-
-        // Cubic ease-in-out function
-        float CubicEaseInOut(float t)
+        else if (tutorialActive)
         {
-            if (t < 0.5f)
+            TutorialInfo current = tutorials[currentTutorial];
+            foreach (KeyCode key in current.requiredButtons)
             {
-                return 4 * t * t * t;
+                if (Input.GetKeyDown(key))
+                {
+                    Time.timeScale = 1;
+                    tutorialActive = false;
+                    current.tutorialText.gameObject.SetActive(false);
+                    if (++currentTutorial < tutorials.Count)
+                    {
+                        StartCoroutine(ActivateTutorialWithDelay(1f));
+                    }
+                    break;
+                }
             }
-            else
-            {
-                float f = (2 * t) - 2;
-                return 0.5f * f * f * f + 1;
-            }
+        }
+    }
+
+    private IEnumerator ActivateTutorialWithDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        ActivateTutorial();
+    }
+
+    private void ActivateTutorial()
+    {
+        if (currentTutorial < tutorials.Count)
+        {
+            TutorialInfo current = tutorials[currentTutorial];
+            tutorialActive = true;
+            Time.timeScale = 0;
+            current.tutorialText.gameObject.SetActive(true);
+            audioSource.PlayOneShot(current.sfx, current.volume);
+        }
+    }
+
+    // Cubic ease-in-out function
+    private float CubicEaseInOut(float t)
+    {
+        if (t < 0.5f)
+        {
+            return 4 * t * t * t;
+        }
+        else
+        {
+            float f = (2 * t) - 2;
+            return 0.5f * f * f * f + 1;
         }
     }
 }
