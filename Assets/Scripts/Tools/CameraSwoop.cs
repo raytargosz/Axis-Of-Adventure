@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class CameraSwoop : MonoBehaviour
 {
@@ -40,6 +41,10 @@ public class CameraSwoop : MonoBehaviour
 
     [Tooltip("Panel to fade out during the swoop")]
     [SerializeField] private Image panel;
+
+    [Header("Events")]
+    [Tooltip("Event that is triggered when the camera swoop is completed.")]
+    public UnityEvent onSwoopComplete;
 
     [SerializeField] private IsometricCameraController isoCamController;
 
@@ -85,6 +90,9 @@ public class CameraSwoop : MonoBehaviour
                 mainCamera.transform.position = endPosition + cameraOffset;
                 isSwooping = false;
                 isoCamController.enabled = true;
+
+                // Invoke the event after the swoop is complete
+                onSwoopComplete.Invoke();
             }
         }
     }
