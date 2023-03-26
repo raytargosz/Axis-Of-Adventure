@@ -1,15 +1,17 @@
 using System.Collections;
 using UnityEngine;
-using TMPro; 
+using TMPro;
 using UnityEngine.UI;
 
 public class LocationTextController : MonoBehaviour
 {
     public TextMeshProUGUI locationText;
-    public float fadeInDuration = 3f;
+    public float textFadeInDuration = 3f;
     public float displayDuration = 6f;
-    public float fadeOutDuration = 3f;
+    public float textFadeOutDuration = 3f;
     public Image locationImage;
+    public float imageFadeInDuration = 1.5f;
+    public float imageMaxAlpha = 0.5f;
     public AudioClip locationSFX;
     public AudioSource audioSource;
 
@@ -34,27 +36,44 @@ public class LocationTextController : MonoBehaviour
         // Play SFX
         audioSource.PlayOneShot(locationSFX);
 
-        // Fade in
-        float elapsedTime = 0f;
-        while (elapsedTime < fadeInDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(0, 1, elapsedTime / fadeInDuration);
-            locationText.color = new Color(locationText.color.r, locationText.color.g, locationText.color.b, alpha);
-            locationImage.color = new Color(locationImage.color.r, locationImage.color.g, locationImage.color.b, alpha);
-            yield return null;
-        }
+        // Fade in text and image
+        StartCoroutine(FadeInText());
+        StartCoroutine(FadeInImage());
 
         // Hold
         yield return new WaitForSeconds(displayDuration);
 
         // Fade out
-        elapsedTime = 0f;
-        while (elapsedTime < fadeOutDuration)
+        float elapsedTime = 0f;
+        while (elapsedTime < textFadeOutDuration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(1, 0, elapsedTime / fadeOutDuration);
+            float alpha = Mathf.Lerp(1, 0, elapsedTime / textFadeOutDuration);
             locationText.color = new Color(locationText.color.r, locationText.color.g, locationText.color.b, alpha);
+            locationImage.color = new Color(locationImage.color.r, locationImage.color.g, locationImage.color.b, alpha * imageMaxAlpha);
+            yield return null;
+        }
+    }
+
+    private IEnumerator FadeInText()
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < textFadeInDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0, 1, elapsedTime / textFadeInDuration);
+            locationText.color = new Color(locationText.color.r, locationText.color.g, locationText.color.b, alpha);
+            yield return null;
+        }
+    }
+
+    private IEnumerator FadeInImage()
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < imageFadeInDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0, imageMaxAlpha, elapsedTime / imageFadeInDuration);
             locationImage.color = new Color(locationImage.color.r, locationImage.color.g, locationImage.color.b, alpha);
             yield return null;
         }
