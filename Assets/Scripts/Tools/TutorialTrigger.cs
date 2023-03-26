@@ -18,45 +18,39 @@ using System.Collections;
 
 public class TutorialTrigger : MonoBehaviour
 {
-    [Header("Tutorial Settings")]
-    [Tooltip("Reference to the TutorialText script.")]
+    [Header("Tutorial Trigger Settings")]
+    [Tooltip("Reference to the TutorialText component")]
     [SerializeField] private TutorialText tutorialText;
 
-    [Tooltip("Index of the tutorial text to display when the trigger is activated.")]
+    [Tooltip("The index of the tutorial that will be activated by this trigger")]
     [SerializeField] private int tutorialIndex;
 
-    [Header("Activation Settings")]
-    [Tooltip("The delay in seconds after the camera swoop is completed before activating the trigger.")]
-    [SerializeField] private float activationDelay = 1f;
+    private bool isActivated = false;
 
     private void Start()
     {
-        // Disable the collider at the beginning
-        GetComponent<Collider>().enabled = false;
-
-        // Subscribe to the onSwoopComplete event from the CameraSwoop script
-        FindObjectOfType<CameraSwoop>().onSwoopComplete.AddListener(ActivateTriggerAfterDelay);
+        isActivated = false;
+        gameObject.SetActive(false);
+        CameraSwoop cameraSwoop = FindObjectOfType<CameraSwoop>();
+        if (cameraSwoop != null)
+        {
+            cameraSwoop.onSwoopComplete.AddListener(() => StartCoroutine(ActivateTriggerAfterDelay())); 
+        }
     }
 
-    IEnumerator ActivateTriggerAfterDelay()
-    {
-        yield return new WaitForSeconds(activationDelay);
 
-        // Enable the collider after the specified delay
-        GetComponent<Collider>().enabled = true;
-    }
-
-    private void OnDestroy()
+    private IEnumerator ActivateTriggerAfterDelay() 
     {
-        // Unsubscribe from the onSwoopComplete event when the object is destroyed
-        FindObjectOfType<CameraSwoop>().onSwoopComplete.RemoveListener(ActivateTriggerAfterDelay);
+        yield return new WaitForSeconds(1f);
+        gameObject.SetActive(true);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isActivated)
         {
             tutorialText.ActivateTutorialFromCollider(tutorialIndex);
+            isActivated = true;
             Destroy(gameObject);
         }
     }
