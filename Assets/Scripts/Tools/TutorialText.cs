@@ -27,11 +27,11 @@ public class TutorialText : MonoBehaviour
     private int currentTutorial = 0;
     private bool tutorialActive = false;
     private AudioSource audioSource;
-    public bool HasStarted { get; private set; } = false;
 
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();        
+        audioSource = GetComponent<AudioSource>();
+        StartCoroutine(ActivateTutorialWithDelay(3f));
     }
 
     private void Update()
@@ -46,6 +46,7 @@ public class TutorialText : MonoBehaviour
                     Time.timeScale = 1;
                     tutorialActive = false;
                     current.tutorialText.gameObject.SetActive(false);
+                    current.tutorialText.alpha = 0;
                     if (++currentTutorial < tutorials.Count)
                     {
                         StartCoroutine(ActivateTutorialWithDelay(1f));
@@ -62,15 +63,6 @@ public class TutorialText : MonoBehaviour
         ActivateTutorial();
     }
 
-    public void StartInitialTutorial(float delay)
-    {
-        if (!HasStarted)
-        {
-            HasStarted = true;
-            StartCoroutine(ActivateTutorialWithDelay(delay));
-        }
-    }
-
     private void ActivateTutorial()
     {
         if (currentTutorial < tutorials.Count)
@@ -79,7 +71,17 @@ public class TutorialText : MonoBehaviour
             tutorialActive = true;
             Time.timeScale = 0;
             current.tutorialText.gameObject.SetActive(true);
+            current.tutorialText.alpha = 1;
             audioSource.PlayOneShot(current.sfx, current.volume);
+        }
+    }
+
+    public void ActivateTutorialFromCollider(int tutorialIndex)
+    {
+        if (tutorialIndex < tutorials.Count)
+        {
+            currentTutorial = tutorialIndex;
+            ActivateTutorial();
         }
     }
 }
