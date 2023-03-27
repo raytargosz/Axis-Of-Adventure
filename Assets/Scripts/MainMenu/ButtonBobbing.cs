@@ -18,7 +18,7 @@ public class ButtonBobbing : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         initialPosition = rectTransform.position;
         elapsedTime = 0f;
-        randomOffset = Random.Range(0f, 2 * Mathf.PI);
+        randomOffset = Random.Range(-Mathf.PI, Mathf.PI); // Updated range
     }
 
     private void Update()
