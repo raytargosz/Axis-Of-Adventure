@@ -11,6 +11,13 @@ public class BobbingObject : MonoBehaviour
     [Tooltip("Toggle between local and world space for the bobbing motion.")]
     [SerializeField] private bool useLocalSpace = true;
 
+    [Header("Rotation Settings")]
+    [Tooltip("Enable or disable Y rotation.")]
+    [SerializeField] private bool enableYRotation = false;
+
+    [Tooltip("Speed of the Y rotation.")]
+    [SerializeField] private float yRotationSpeed = 1f;
+
     private Vector3 startPosition;
     private float timeOffset;
 
@@ -53,6 +60,12 @@ public class BobbingObject : MonoBehaviour
         else
         {
             transform.position = newPosition;
+        }
+
+        // Rotate the object around the Y axis if enabled
+        if (enableYRotation)
+        {
+            transform.Rotate(0, yRotationSpeed * Time.deltaTime, 0, useLocalSpace ? Space.Self : Space.World);
         }
     }
 }

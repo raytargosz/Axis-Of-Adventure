@@ -17,6 +17,9 @@ public class IsometricCameraController : MonoBehaviour
     [Tooltip("Distance for the camera to swoop in")]
     public float swoopInDistance = 2f;
 
+    [Header("Surface Audio Manager")]
+    public SurfaceAudioManager surfaceAudioManager;
+
     private Vector3 initialPosition;
 
     [Header("Camera Settings")]
@@ -54,6 +57,34 @@ public class IsometricCameraController : MonoBehaviour
     private float lastSFXTime;
     private bool inFirstPersonZone = false;
 
+    [Header("Surface Audio Settings")]
+    [SerializeField] private string surfaceTag = "Default";
+    [SerializeField] private float jumpAndLandVolume = 1f;
+
+    private CharacterController characterController;
+    private Vector3 velocity;
+    public float jumpForce = 10f;
+    private bool isJumping;
+
+    public void Jump()
+    {
+        if (characterController.isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * Physics.gravity.y);
+            audioSource.PlayOneShot(surfaceAudioManager.GetJumpSound(surfaceTag), jumpAndLandVolume);
+            isJumping = true;
+        }
+    }
+
+    public void Land()
+    {
+        if (!characterController.isGrounded) return;
+
+        velocity.y = 0;
+        audioSource.PlayOneShot(surfaceAudioManager.GetLandSound(surfaceTag), jumpAndLandVolume);
+        isJumping = false;
+    }
+
     void Start()
     {
         cam = GetComponent<Camera>();
@@ -64,6 +95,9 @@ public class IsometricCameraController : MonoBehaviour
 
         // Store the initial position of the camera
         initialPosition = transform.position;
+
+        characterController = GetComponent<CharacterController>();
+        isJumping = false;
     }
 
     void Update()
@@ -72,6 +106,15 @@ public class IsometricCameraController : MonoBehaviour
 
         UpdateRotation();
         UpdateZoom();
+
+        if (Input.GetButtonDown("Jump") && !isJumping)
+        {
+            Jump();
+        }
+        else if (isJumping && characterController.isGrounded)
+        {
+            Land();
+        }
     }
 
     void LateUpdate()
