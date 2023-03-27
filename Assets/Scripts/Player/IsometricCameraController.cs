@@ -4,9 +4,10 @@
  * To use this script, attach it to the main camera in your scene and configure the public variables as needed.
  */
 
-
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 
 public class IsometricCameraController : MonoBehaviour
@@ -26,11 +27,9 @@ public class IsometricCameraController : MonoBehaviour
     public float isoToFpsSpeed = 1f;
 
     [Header("Post Processing Effects")]
-    using UnityEngine.Rendering;
     public VolumeProfile postProcessingProfile;
 
-
-private Vector3 initialPosition;
+    private Vector3 initialPosition;
 
     [Header("Camera Settings")]
     public Transform target;
@@ -218,15 +217,15 @@ private Vector3 initialPosition;
     IEnumerator CameraTransition(bool enableFirstPerson)
     {
     // Get the Exposure and MotionBlur settings
-    Exposure exposureSettings;
-    MotionBlur motionBlurSettings;
+    //Exposure exposureSettings;
+    //MotionBlur motionBlurSettings;
 
-    postProcessingProfile.TryGet(out exposureSettings);
-    postProcessingProfile.TryGet(out motionBlurSettings);
+    //postProcessingProfile.TryGet(out exposureSettings);
+    //postProcessingProfile.TryGet(out motionBlurSettings);
 
     // Enable the post-processing effects
-    exposureSettings.active = true;
-    motionBlurSettings.active = true;
+    //exposureSettings.active = true;
+    //motionBlurSettings.active = true;
 
     float transitionDuration = enableFirstPerson ? isoToFpsSpeed : fpsToIsoSpeed; // Use the appropriate speed variable
         float elapsedTime = 0f;
@@ -279,8 +278,8 @@ private Vector3 initialPosition;
         }
 
     // Disable the post-processing effects
-    exposureSettings.active = false;
-    motionBlurSettings.active = false;
+    //exposureSettings.active = false;
+    //motionBlurSettings.active = false;
 }
 
     // Swoop in the camera
