@@ -53,17 +53,11 @@ public class CameraSwoop : MonoBehaviour
 
     public bool IsSwooping => isSwooping;
 
-    private Quaternion startRotation;
-    private Quaternion endRotation;
-
     private void Start()
     {
         mainCamera.transform.position = startPosition + cameraOffset;
         startTime = Time.time;
         isSwooping = true;
-
-        startRotation = mainCamera.transform.rotation;
-        endRotation = Quaternion.LookRotation(playerTransform.position - endPosition);
 
         audioSource.clip = swoopAudioClip;
         audioSource.volume = audioVolume;
@@ -78,22 +72,22 @@ public class CameraSwoop : MonoBehaviour
         {
             float swoopProgress = (Time.time - startTime) / swoopDuration;
 
+            mainCamera.transform.LookAt(playerTransform);
+
             if (panel != null)
             {
                 float fadeProgress = (Time.time - startTime) / fadeDuration;
-                float easedProgress = Mathf.SmoothStep(0f, 1f, fadeProgress);
+                float easedProgress = CubicEaseInOut(fadeProgress);
                 Color panelColor = panel.color;
                 panelColor.a = Mathf.Lerp(225f / 255f, 0, easedProgress);
                 panel.color = panelColor;
             }
 
-            mainCamera.transform.position = Vector3.Lerp(startPosition + cameraOffset, endPosition + cameraOffset, Mathf.SmoothStep(0f, 1f, swoopProgress));
-            mainCamera.transform.rotation = Quaternion.Lerp(startRotation, endRotation, Mathf.SmoothStep(0f, 1f, swoopProgress));
+            mainCamera.transform.position = Vector3.Lerp(startPosition + cameraOffset, endPosition + cameraOffset, swoopProgress);
 
             if (swoopProgress >= 1f)
             {
                 mainCamera.transform.position = endPosition + cameraOffset;
-                mainCamera.transform.rotation = endRotation;
                 isSwooping = false;
                 isoCamController.enabled = true;
 

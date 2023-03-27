@@ -8,7 +8,6 @@
 using System.Collections;
 using UnityEngine;
 
-
 public class IsometricCameraController : MonoBehaviour
 {
     [Header("Camera Swooping")]
@@ -21,16 +20,7 @@ public class IsometricCameraController : MonoBehaviour
     [Header("Surface Audio Manager")]
     public SurfaceAudioManager surfaceAudioManager;
 
-    [Header("Transition Speeds")]
-    public float fpsToIsoSpeed = 1f;
-    public float isoToFpsSpeed = 1f;
-
-    [Header("Post Processing Effects")]
-    using UnityEngine.Rendering;
-    public VolumeProfile postProcessingProfile;
-
-
-private Vector3 initialPosition;
+    private Vector3 initialPosition;
 
     [Header("Camera Settings")]
     public Transform target;
@@ -66,7 +56,6 @@ private Vector3 initialPosition;
     private AudioSource audioSource;
     private float lastSFXTime;
     private bool inFirstPersonZone = false;
-    private bool disableLookAtCharacter = false;
 
     [Header("Surface Audio Settings")]
     [SerializeField] private string surfaceTag = "Default";
@@ -192,11 +181,7 @@ private Vector3 initialPosition;
         Quaternion updatedTargetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
         Vector3 updatedTargetPosition = target.position - updatedTargetRotation * Vector3.forward * distance + offset;
         transform.position = Vector3.SmoothDamp(transform.position, updatedTargetPosition, ref currentVelocity, smoothingSpeed);
-
-        if (!disableLookAtCharacter)
-        {
-            transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
-        }
+        transform.rotation = Quaternion.Lerp(transform.rotation, updatedTargetRotation, Time.deltaTime * rotationSpeed);
     }
 
     public void ToggleIsometricCameraMode()
@@ -217,18 +202,7 @@ private Vector3 initialPosition;
 
     IEnumerator CameraTransition(bool enableFirstPerson)
     {
-    // Get the Exposure and MotionBlur settings
-    Exposure exposureSettings;
-    MotionBlur motionBlurSettings;
-
-    postProcessingProfile.TryGet(out exposureSettings);
-    postProcessingProfile.TryGet(out motionBlurSettings);
-
-    // Enable the post-processing effects
-    exposureSettings.active = true;
-    motionBlurSettings.active = true;
-
-    float transitionDuration = enableFirstPerson ? isoToFpsSpeed : fpsToIsoSpeed; // Use the appropriate speed variable
+        float transitionDuration = 1f;
         float elapsedTime = 0f;
 
         Vector3 initialCameraPosition = transform.position;
@@ -248,20 +222,15 @@ private Vector3 initialPosition;
             targetCameraRotation = initialCameraRotation;
         }
 
-        disableLookAtCharacter = true;
-
         while (elapsedTime < transitionDuration)
         {
             elapsedTime += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsedTime / transitionDuration); // Use SmoothStep for easing
 
-            transform.position = Vector3.Lerp(initialCameraPosition, targetCameraPosition, t);
-            transform.rotation = Quaternion.Lerp(initialCameraRotation, targetCameraRotation, t);
+            transform.position = Vector3.Lerp(initialCameraPosition, targetCameraPosition, elapsedTime / transitionDuration);
+            transform.rotation = Quaternion.Lerp(initialCameraRotation, targetCameraRotation, elapsedTime / transitionDuration);
 
             yield return null;
         }
-
-        disableLookAtCharacter = false;
 
         inFirstPersonZone = enableFirstPerson;
 
@@ -277,37 +246,26 @@ private Vector3 initialPosition;
         {
             transform.position = initialPosition;
         }
-
-    // Disable the post-processing effects
-    exposureSettings.active = false;
-    motionBlurSettings.active = false;
-}
+    }
 
     // Swoop in the camera
     public IEnumerator SwoopIn()
     {
-        disableLookAtCharacter = true;
-
         while (Vector3.Distance(transform.position, target.position) > swoopInDistance)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.position, cameraSwoopSpeed * Time.deltaTime);
             yield return null;
         }
-
-        disableLookAtCharacter = false;
     }
 
+    // Swoop out the camera
     public IEnumerator SwoopOut()
     {
-        disableLookAtCharacter = true;
-
         while (Vector3.Distance(transform.position, initialPosition) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, initialPosition, cameraSwoopSpeed * Time.deltaTime);
             yield return null;
         }
-
-        disableLookAtCharacter = false;
     }
 
     public void EnableFirstPersonCamera(bool enable)
