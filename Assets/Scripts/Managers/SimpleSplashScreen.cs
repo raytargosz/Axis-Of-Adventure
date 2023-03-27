@@ -6,13 +6,14 @@ using System.Collections;
 public class SimpleSplashScreen : MonoBehaviour
 {
     [Header("UI Elements")]
-    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private CanvasGroup titleCanvasGroup;
     [SerializeField] private TextMeshProUGUI pressAnyKeyText;
+    [SerializeField] private CanvasGroup mainCanvasGroup;
 
     [Header("Timings")]
     [SerializeField] private float fadeDuration = 2f;
-    [SerializeField] private GameObject mainCanvas;
-    [SerializeField] private float mainCanvasFadeInDuration = 2f;
+    [SerializeField] private float mainCanvasFadeInDuration = 1f;
+    [SerializeField] private float delayBetweenFadeOutAndIn = 1f;
 
     [Header("SFX")]
     [SerializeField] private AudioClip mouseClickSFX;
@@ -26,13 +27,15 @@ public class SimpleSplashScreen : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        audioSource.mute = false; // Ensure the AudioSource is not muted
+        mainCanvasGroup.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         if (splashScreenActive && (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)))
         {
-            StartCoroutine(FadeOutSplashScreen());
+            splashScreenActive = false;
 
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
             {
@@ -42,55 +45,50 @@ public class SimpleSplashScreen : MonoBehaviour
             {
                 audioSource.PlayOneShot(keyPressSFX, sfxVolume);
             }
+
+            StartCoroutine(FadeOutSplashScreenAndEnableMainCanvas());
         }
+    }
+
+    private IEnumerator FadeOutSplashScreenAndEnableMainCanvas()
+    {
+        yield return StartCoroutine(FadeOutSplashScreen());
+        yield return new WaitForSeconds(delayBetweenFadeOutAndIn);
+        EnableMainCanvas();
+    }
+
+    private void EnableMainCanvas()
+    {
+        mainCanvasGroup.gameObject.SetActive(true);
+        mainCanvasGroup.alpha = 0;
+        mainCanvasGroup.interactable = false;
+        mainCanvasGroup.blocksRaycasts = false;
+
+        // Play the main canvas fade in SFX
+        audioSource.PlayOneShot(mainCanvasFadeInSFX, sfxVolume);
+
+        StartCoroutine(FadeInMainCanvas());
     }
 
     private IEnumerator FadeOutSplashScreen()
     {
-        splashScreenActive = false;
-
         float startTime = Time.time;
         float progress;
-        Color textColor;
 
         while ((Time.time - startTime) < fadeDuration)
         {
             progress = (Time.time - startTime) / fadeDuration;
-
-            textColor = titleText.color;
-            textColor.a = Mathf.Lerp(1, 0, progress);
-            titleText.color = textColor;
-
-            textColor = pressAnyKeyText.color;
-            textColor.a = Mathf.Lerp(1, 0, progress);
-            pressAnyKeyText.color = textColor;
-
+            titleCanvasGroup.alpha = Mathf.Lerp(1, 0, progress);
+            pressAnyKeyText.alpha = Mathf.Lerp(1, 0, progress);
             yield return null;
         }
 
-        textColor = titleText.color;
-        textColor.a = 0;
-        titleText.color = textColor;
-
-        textColor = pressAnyKeyText.color;
-        textColor.a = 0;
-        pressAnyKeyText.color = textColor;
-
-        // Call your method to fade in the main canvas and play the mainCanvasFadeInSFX here
-        StartCoroutine(FadeInMainCanvas());
+        titleCanvasGroup.alpha = 0;
+        pressAnyKeyText.alpha = 0;
     }
 
     private IEnumerator FadeInMainCanvas()
     {
-        // Play the main canvas fade in SFX
-        audioSource.PlayOneShot(mainCanvasFadeInSFX, sfxVolume);
-
-        // Get the CanvasGroup component of the main canvas
-        CanvasGroup mainCanvasGroup = mainCanvas.GetComponent<CanvasGroup>();
-
-        // Set the initial alpha value to 0
-        mainCanvasGroup.alpha = 0;
-
         float elapsedTime = 0f;
         while (elapsedTime < mainCanvasFadeInDuration)
         {
@@ -99,7 +97,12 @@ public class SimpleSplashScreen : MonoBehaviour
             mainCanvasGroup.alpha = Mathf.Lerp(0, 1, progress);
             yield return null;
         }
+
         // Make sure the final alpha value is set to 1
         mainCanvasGroup.alpha = 1;
+
+        // Make the main canvas interactable after the fade-in is complete
+        mainCanvasGroup.interactable = true;
+        mainCanvasGroup.blocksRaycasts = true;
     }
 }
