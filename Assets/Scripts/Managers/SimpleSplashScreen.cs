@@ -22,7 +22,7 @@ public class SimpleSplashScreen : MonoBehaviour
     [Range(0, 1)][SerializeField] private float sfxVolume = 1f;
 
     private AudioSource audioSource;
-    private bool splashScreenActive = true;
+    protected bool splashScreenActive = true;
 
     private void Start()
     {
@@ -31,7 +31,7 @@ public class SimpleSplashScreen : MonoBehaviour
         mainCanvasGroup.gameObject.SetActive(false);
     }
 
-    private void Update()
+    protected void Update()
     {
         if (splashScreenActive && (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)))
         {
