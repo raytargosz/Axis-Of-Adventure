@@ -15,6 +15,7 @@ public class LocationTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             locationTextController.TriggerLocationText(locationName);
+            Destroy(gameObject);
         }
     }
 }

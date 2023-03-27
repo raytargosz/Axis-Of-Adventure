@@ -25,16 +25,50 @@ public class LocationTextController : MonoBehaviour
 
     private bool hasTriggered = false;
 
+    void Start()
+    {
+        // Set initial alpha values for locationText and locationImage
+        SetTextAlpha(0f);
+        SetImageAlpha(0f);
+    }
+
+    private void SetTextAlpha(float alpha)
+    {
+        for (int i = 0; i < locationText.textInfo.characterCount; i++)
+        {
+            TMP_CharacterInfo charInfo = locationText.textInfo.characterInfo[i];
+            int materialIndex = charInfo.materialReferenceIndex;
+            int vertexIndex = charInfo.vertexIndex;
+            Color32[] vertexColors = locationText.textInfo.meshInfo[materialIndex].colors32;
+            Color32 c = vertexColors[vertexIndex];
+
+            for (int j = 0; j < 4; j++)
+            {
+                vertexColors[vertexIndex + j] = new Color32(c.r, c.g, c.b, (byte)(alpha * 255));
+            }
+
+            locationText.textInfo.meshInfo[materialIndex].colors32 = vertexColors;
+        }
+
+        locationText.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32);
+    }
+
+    private void SetImageAlpha(float alpha)
+    {
+        locationImage.color = new Color(locationImage.color.r, locationImage.color.g, locationImage.color.b, alpha);
+    }
+
     public void TriggerLocationText(string locationName)
     {
-        StartCoroutine(ShowLocationText(locationName));
+        if (!hasTriggered)
+        {
+            hasTriggered = true;
+            StartCoroutine(ShowLocationText(locationName));
+        }
     }
 
     private IEnumerator ShowLocationText(string locationName)
     {
-        if (hasTriggered) yield break;
-
-        hasTriggered = true;
         locationText.text = locationName;
 
         // Play SFX
@@ -125,6 +159,7 @@ public class LocationTextController : MonoBehaviour
             }
         }
     }
+
     private IEnumerator FadeInImageCoroutine()
     {
         float elapsedTime = 0f;
@@ -137,6 +172,11 @@ public class LocationTextController : MonoBehaviour
         }
     }
 
+    public void ResetTrigger()
+    {
+        hasTriggered = false;
+    }
+
     private IEnumerator FadeOutImageCoroutine()
     {
         float elapsedTime = 0f;
@@ -147,5 +187,6 @@ public class LocationTextController : MonoBehaviour
             locationImage.color = new Color(locationImage.color.r, locationImage.color.g, locationImage.color.b, alpha);
             yield return null;
         }
+        ResetTrigger();
     }
 }
