@@ -25,6 +25,9 @@ public class TutorialTrigger : MonoBehaviour
     [Tooltip("The index of the tutorial that will be activated by this trigger")]
     [SerializeField] private int tutorialIndex;
 
+    [Tooltip("Required button(s) to dismiss the tutorial")]
+    [SerializeField] private KeyCode[] requiredKeys;
+
     private bool isActivated = false;
 
     private void Start()
@@ -34,12 +37,11 @@ public class TutorialTrigger : MonoBehaviour
         CameraSwoop cameraSwoop = FindObjectOfType<CameraSwoop>();
         if (cameraSwoop != null)
         {
-            cameraSwoop.onSwoopComplete.AddListener(() => StartCoroutine(ActivateTriggerAfterDelay())); 
+            cameraSwoop.onSwoopComplete.AddListener(() => StartCoroutine(ActivateTriggerAfterDelay()));
         }
     }
 
-
-    private IEnumerator ActivateTriggerAfterDelay() 
+    private IEnumerator ActivateTriggerAfterDelay()
     {
         yield return new WaitForSeconds(1f);
         gameObject.SetActive(true);
@@ -51,7 +53,27 @@ public class TutorialTrigger : MonoBehaviour
         {
             tutorialText.ActivateTutorialFromCollider(tutorialIndex);
             isActivated = true;
+        }
+    }
+
+    private void Update()
+    {
+        if (isActivated && AreRequiredKeysPressed())
+        {
+            tutorialText.FadeOutTutorialText();
             Destroy(gameObject);
         }
+    }
+
+    private bool AreRequiredKeysPressed()
+    {
+        foreach (KeyCode key in requiredKeys)
+        {
+            if (Input.GetKeyDown(key))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

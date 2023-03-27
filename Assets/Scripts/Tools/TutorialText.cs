@@ -7,6 +7,10 @@ public class TutorialText : MonoBehaviour
 {
     [SerializeField] private List<TutorialInfo> tutorials = new List<TutorialInfo>();
 
+    [Header("Tutorial Text Settings")]
+    [SerializeField] private TextMeshProUGUI tutorialTextMesh;
+    [SerializeField] private float fadeOutDuration = 1f;
+
     [System.Serializable]
     public class TutorialInfo
     {
@@ -43,7 +47,6 @@ public class TutorialText : MonoBehaviour
             {
                 if (Input.GetKeyDown(key))
                 {
-                    Time.timeScale = 1;
                     tutorialActive = false;
                     current.tutorialText.gameObject.SetActive(false);
                     current.tutorialText.alpha = 0;
@@ -69,7 +72,6 @@ public class TutorialText : MonoBehaviour
         {
             TutorialInfo current = tutorials[currentTutorial];
             tutorialActive = true;
-            Time.timeScale = 0;
             current.tutorialText.gameObject.SetActive(true);
             current.tutorialText.alpha = 1;
             audioSource.PlayOneShot(current.sfx, current.volume);
@@ -83,5 +85,27 @@ public class TutorialText : MonoBehaviour
             currentTutorial = tutorialIndex;
             ActivateTutorial();
         }
+    }
+
+    public void FadeOutTutorialText()
+    {
+        StartCoroutine(FadeOutText());
+    }
+
+    private IEnumerator FadeOutText()
+    {
+        float startTime = Time.time;
+        Color textColor = tutorialTextMesh.color;
+
+        while (Time.time - startTime < fadeOutDuration)
+        {
+            float progress = (Time.time - startTime) / fadeOutDuration;
+            textColor.a = Mathf.Lerp(1, 0, progress);
+            tutorialTextMesh.color = textColor;
+            yield return null;
+        }
+
+        textColor.a = 0;
+        tutorialTextMesh.color = textColor;
     }
 }
