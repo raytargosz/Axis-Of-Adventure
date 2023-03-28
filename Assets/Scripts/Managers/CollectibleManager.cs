@@ -52,8 +52,9 @@ public class CollectibleManager : MonoBehaviour
 
     private void Start()
     {
+        DontDestroyOnLoad(gameObject);
         CollectibleCount = 0;
-        UpdateCollectibleCounterText();
+        UpdateCollectibleCounterText();        
     }
 
     private void Update()

@@ -11,9 +11,14 @@ public class LevelTimer : MonoBehaviour
     private float elapsedTime;
     public bool HasFinishedLevel { get; private set; }
 
+    void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Update()
     {
-        if (!HasFinishedLevel && !cameraSwoop.IsSwooping)
+        if (!HasFinishedLevel && (cameraSwoop == null || !cameraSwoop.IsSwooping))
         {
             elapsedTime += Time.deltaTime;
             UpdateTimerText();
