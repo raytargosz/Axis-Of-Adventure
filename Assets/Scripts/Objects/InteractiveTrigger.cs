@@ -75,6 +75,12 @@ public class InteractiveTrigger : MonoBehaviour
 
     IEnumerator LoadTargetScene()
     {
+        PlayerPositionManager positionManager = FindObjectOfType<PlayerPositionManager>();
+        if (positionManager != null)
+        {
+            positionManager.SetPosition(player.transform.position, player.transform.rotation);
+        }
+
         playerMovement.enabled = false;
         SetPlayerMeshesActive(false);
 
