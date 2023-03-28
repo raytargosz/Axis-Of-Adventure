@@ -10,6 +10,8 @@ public class InteractiveTrigger : MonoBehaviour
     public AudioClip sfx;
     public AudioClip lockedSfx;
     public int requiredCollectibles;
+    public UnityEngine.AudioClip[] lockedSfxArray;
+    public GameObject cubesRemainingUI;
 
     private CombinedPlayerController playerMovement;
     private FadeController fadeController;
@@ -17,6 +19,8 @@ public class InteractiveTrigger : MonoBehaviour
     private bool playerInRange = false;
     private GameObject player;
     private CollectibleManager collectibleManager;
+    private float sfxCooldown = 0.0f;
+    private float sfxCooldownDuration = 3.0f;
 
     private void Start()
     {
@@ -26,11 +30,18 @@ public class InteractiveTrigger : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         collectibleManager = FindObjectOfType<CollectibleManager>();
         promptUI.SetActive(false);
+        cubesRemainingUI.SetActive(false);
+    }
+
+    private void UpdateCubesRemainingUI()
+    {
+        int remainingCubes = requiredCollectibles - collectibleManager.CollectibleCount;
+        cubesRemainingUI.GetComponent<Text>().text = remainingCubes > 0 ? $"{remainingCubes} More Cubes Needed" : "Door Unlocked";
     }
 
     private void Update()
     {
-        if (playerInRange && Input.GetKeyDown(KeyCode.F))
+        if (playerInRange && Input.GetKeyDown(KeyCode.F) && Time.time >= sfxCooldown)
         {
             if (collectibleManager.CollectibleCount >= requiredCollectibles)
             {
@@ -47,6 +58,14 @@ public class InteractiveTrigger : MonoBehaviour
                 {
                     audioSource.PlayOneShot(lockedSfx);
                 }
+
+                if (lockedSfxArray.Length > 0)
+                {
+                    int randomIndex = Random.Range(0, lockedSfxArray.Length);
+                    audioSource.PlayOneShot(lockedSfxArray[randomIndex]);
+                }
+
+                sfxCooldown = Time.time + sfxCooldownDuration;
             }
         }
     }
@@ -77,6 +96,8 @@ public class InteractiveTrigger : MonoBehaviour
         {
             playerInRange = true;
             promptUI.SetActive(true);
+            cubesRemainingUI.SetActive(true);
+            UpdateCubesRemainingUI();
         }
     }
 
@@ -86,6 +107,7 @@ public class InteractiveTrigger : MonoBehaviour
         {
             playerInRange = false;
             promptUI.SetActive(false);
+            cubesRemainingUI.SetActive(false);
         }
     }
 }
