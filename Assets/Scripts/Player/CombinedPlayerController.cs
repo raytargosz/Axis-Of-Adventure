@@ -278,7 +278,7 @@ public class CombinedPlayerController : MonoBehaviour
 
     private void UpdateJump()
     {
-        Debug.Log("Remaining jumps: " + remainingJumps);
+        //Debug.Log("Remaining jumps: " + remainingJumps);
 
         if (Input.GetButtonDown("Jump") && remainingJumps > 0)
         {

@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class InteractiveTrigger : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class InteractiveTrigger : MonoBehaviour
     public AudioClip sfx;
     public AudioClip lockedSfx;
     public int requiredCollectibles;
-    public UnityEngine.AudioClip[] lockedSfxArray;
+    public AudioClip[] lockedSfxArray;
     public GameObject cubesRemainingUI;
 
     private CombinedPlayerController playerMovement;
@@ -21,6 +22,7 @@ public class InteractiveTrigger : MonoBehaviour
     private CollectibleManager collectibleManager;
     private float sfxCooldown = 0.0f;
     private float sfxCooldownDuration = 3.0f;
+    private AudioFadeOut audioFadeOut;
 
     private void Start()
     {
@@ -31,12 +33,13 @@ public class InteractiveTrigger : MonoBehaviour
         collectibleManager = FindObjectOfType<CollectibleManager>();
         promptUI.SetActive(false);
         cubesRemainingUI.SetActive(false);
+        audioFadeOut = FindObjectOfType<AudioFadeOut>();
     }
 
     private void UpdateCubesRemainingUI()
     {
         int remainingCubes = requiredCollectibles - collectibleManager.CollectibleCount;
-        cubesRemainingUI.GetComponent<Text>().text = remainingCubes > 0 ? $"{remainingCubes} More Cubes Needed" : "Door Unlocked";
+        cubesRemainingUI.GetComponent<TextMeshProUGUI>().text = remainingCubes > 0 ? $"{remainingCubes} More Cubes Needed" : "Door Unlocked";
     }
 
     private void Update()
@@ -75,6 +78,7 @@ public class InteractiveTrigger : MonoBehaviour
         playerMovement.enabled = false;
         SetPlayerMeshesActive(false);
 
+        audioFadeOut.FadeOutAllAudio();
         fadeController.StartFadeOut(targetSceneName);
         yield return new WaitForSeconds(2.5f);
 
