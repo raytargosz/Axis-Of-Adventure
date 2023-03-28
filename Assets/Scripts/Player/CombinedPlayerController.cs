@@ -104,6 +104,11 @@ public class CombinedPlayerController : MonoBehaviour
     private float boostTimer;
     private Vector3 boostDirection;
 
+    public FadeController fadeController;
+
+    private bool insideFirstPersonZone = false;
+    private bool insideInteractiveSceneZone = false;
+
     void SetCustomCursor(Texture2D cursorTexture)
     {
         if (cursorTexture == null)
@@ -181,6 +186,14 @@ public class CombinedPlayerController : MonoBehaviour
         controller.Move((moveDirection + new Vector3(0, bobbingObjectVerticalMovement, 0)) * Time.deltaTime);
 
         ApplyBoost();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (insideInteractiveSceneZone)
+            {
+                StartCoroutine(fadeController.FadeOut());
+            }
+        }
     }
 
     private float GetBobbingObjectVerticalMovement()
@@ -362,11 +375,17 @@ public class CombinedPlayerController : MonoBehaviour
         }
         else if (other.CompareTag("FirstPersonZone"))
         {
+            insideFirstPersonZone = true;
             StartCoroutine(ToggleFirstPersonMode());
+        }
+        else if (other.CompareTag("InteractiveSceneZone"))
+        {
+            insideInteractiveSceneZone = true;
         }
     }
 
-private void ApplyBoost()
+
+    private void ApplyBoost()
     {
         if (boostTimer > 0)
         {
@@ -440,7 +459,12 @@ private void ApplyBoost()
     {
         if (other.CompareTag("FirstPersonZone"))
         {
+            insideFirstPersonZone = false;
             StartCoroutine(ToggleFirstPersonMode());
+        }
+        else if (other.CompareTag("InteractiveSceneZone"))
+        {
+            insideInteractiveSceneZone = false;
         }
     }
 }
