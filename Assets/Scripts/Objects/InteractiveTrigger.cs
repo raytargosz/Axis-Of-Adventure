@@ -8,12 +8,15 @@ public class InteractiveTrigger : MonoBehaviour
     public string targetSceneName;
     public GameObject promptUI;
     public AudioClip sfx;
+    public AudioClip lockedSfx;
+    public int requiredCollectibles;
 
     private CombinedPlayerController playerMovement;
     private FadeController fadeController;
     private AudioSource audioSource;
     private bool playerInRange = false;
     private GameObject player;
+    private CollectibleManager collectibleManager;
 
     private void Start()
     {
@@ -21,32 +24,37 @@ public class InteractiveTrigger : MonoBehaviour
         playerMovement = player.GetComponent<CombinedPlayerController>();
         fadeController = FindObjectOfType<FadeController>();
         audioSource = GetComponent<AudioSource>();
+        collectibleManager = FindObjectOfType<CollectibleManager>();
         promptUI.SetActive(false);
     }
 
     private void Update()
     {
-        if (playerInRange)
-        {
-            Debug.Log("Player in range");
-        }
-
         if (playerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            if (sfx != null)
+            if (collectibleManager.CollectibleCount >= requiredCollectibles)
             {
-                audioSource.PlayOneShot(sfx);
-            }
+                if (sfx != null)
+                {
+                    audioSource.PlayOneShot(sfx);
+                }
 
-            StartCoroutine(LoadTargetScene());
+                StartCoroutine(LoadTargetScene());
+            }
+            else
+            {
+                if (lockedSfx != null)
+                {
+                    audioSource.PlayOneShot(lockedSfx);
+                }
+            }
         }
     }
 
     IEnumerator LoadTargetScene()
     {
-        Debug.Log("LoadTargetScene started");
         playerMovement.enabled = false;
-        SetPlayerMeshesActive(true);
+        SetPlayerMeshesActive(false);
 
         fadeController.StartFadeOut(targetSceneName);
         yield return new WaitForSeconds(2.5f);
@@ -62,7 +70,6 @@ public class InteractiveTrigger : MonoBehaviour
             renderer.enabled = isActive;
         }
     }
-
 
     private void OnTriggerEnter(Collider other)
     {

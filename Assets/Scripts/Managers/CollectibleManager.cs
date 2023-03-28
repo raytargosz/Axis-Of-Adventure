@@ -46,7 +46,7 @@ public class CollectibleManager : MonoBehaviour
 
     private bool levelCompleted = false;
 
-    public static int CollectibleCount { get; private set; }
+    public int CollectibleCount { get; private set; }
     public int RequiredPickupAmount => requiredPickupAmount;
     public event Action OnCollectiblePicked;
 

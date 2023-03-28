@@ -44,7 +44,7 @@ public class Collectible : MonoBehaviour
             CollectibleManager collectibleManager = FindObjectOfType<CollectibleManager>();
             collectibleManager.IncrementCollectibleCount();
 
-            if (collectibleManager.IsSpecialCollectible(CollectibleManager.CollectibleCount) && specialCollectibleSound != null)
+            if (collectibleManager.IsSpecialCollectible(collectibleManager.CollectibleCount) && specialCollectibleSound != null)
             {
                 audioSource.PlayOneShot(specialCollectibleSound, sfxVolume);
             }
