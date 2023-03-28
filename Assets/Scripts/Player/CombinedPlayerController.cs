@@ -261,23 +261,24 @@ public class CombinedPlayerController : MonoBehaviour
         wasGrounded = isGrounded;
         isGrounded = IsGrounded();
 
-        if (isGrounded && !wasGrounded)
+        if (isGrounded)
         {
-            remainingJumps = 2;
-            moveDirection.y = -0.1f;
+            if (!wasGrounded)
+            {
+                remainingJumps = 2;
+                moveDirection.y = -0.1f;
+            }
         }
-        else if (!isGrounded)
+        else
         {
             moveDirection.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
+
     private void UpdateJump()
     {
-        if (isGrounded)
-        {
-            remainingJumps = 2;
-        }
+        Debug.Log("Remaining jumps: " + remainingJumps);
 
         if (Input.GetButtonDown("Jump") && remainingJumps > 0)
         {
@@ -295,7 +296,6 @@ public class CombinedPlayerController : MonoBehaviour
             audioSource.PlayOneShot(landingSound);
         }
     }
-
 
     private void PerformJump()
     {

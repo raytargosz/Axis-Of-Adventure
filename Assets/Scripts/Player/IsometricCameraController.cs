@@ -76,19 +76,21 @@ public class IsometricCameraController : MonoBehaviour
     public float jumpForce = 10f;
     private bool isJumping;
 
+    [Header("Character Controller")]
+    public CharacterController playerCharacterController;
+
     public void Jump()
     {
-        if (characterController.isGrounded)
+        if (playerCharacterController.isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpForce * -2f * Physics.gravity.y);
             audioSource.PlayOneShot(surfaceAudioManager.GetJumpSound(surfaceTag), jumpAndLandVolume);
             isJumping = true;
         }
     }
-
     public void Land()
     {
-        if (!characterController.isGrounded) return;
+        if (!playerCharacterController.isGrounded) return;
 
         velocity.y = 0;
         audioSource.PlayOneShot(surfaceAudioManager.GetLandSound(surfaceTag), jumpAndLandVolume);
@@ -106,7 +108,8 @@ public class IsometricCameraController : MonoBehaviour
         // Store the initial position of the camera
         initialPosition = transform.position;
 
-        characterController = GetComponent<CharacterController>();
+        // Get the CharacterController component from the player character
+        playerCharacterController = target.GetComponent<CharacterController>();
         isJumping = false;
     }
 
@@ -121,7 +124,7 @@ public class IsometricCameraController : MonoBehaviour
         {
             Jump();
         }
-        else if (isJumping && characterController.isGrounded)
+        else if (isJumping && playerCharacterController.isGrounded)
         {
             Land();
         }
