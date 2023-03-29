@@ -11,9 +11,10 @@ public enum PadType
     SunPressure
 }
 
-public class PressurePad : MonoBehaviour
+public class PressurePads : MonoBehaviour
 {
     // Type of pressure pad
+    [SerializeField]
     public PadType padType;
 
     // Audio clips to play when player steps on pressure pad
@@ -143,12 +144,12 @@ public class PressurePad : MonoBehaviour
             else if (padType == PadType.CustomSun)
             {
                 playerOnPad = true;
-                PlaySFX(stepOnSFX);
+                PlayRandomSFX();
             }
             else if (padType == PadType.SunPressure)
             {
                 playerOnPad = true;
-                PlaySFX(stepOnSFX);
+                PlayRandomSFX();
             }
         }
     }
@@ -235,7 +236,7 @@ public class PressurePad : MonoBehaviour
 
     private void FastForwardTicksSun()
     {
-        float tickIncrement = ticksToFastForward * Time.deltaTime;
+        float tickIncrement = tickCountSpeed * Time.deltaTime;
         weatherController.currentTicks = Mathf.Min(weatherController.currentTicks + tickIncrement, maxTickCount);
     }
 
