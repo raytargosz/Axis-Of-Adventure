@@ -110,6 +110,7 @@ public class CombinedPlayerController : MonoBehaviour
     private Vector3 boostDirection;
 
     public FadeController fadeController;
+    public float rotationSpeed = 5f;
 
     private bool insideFirstPersonZone = false;
     private bool insideInteractiveSceneZone = false;
@@ -171,10 +172,8 @@ public class CombinedPlayerController : MonoBehaviour
             ToggleCursorVisibility();
         }
 
-        if (firstPersonMode)
-        {
-            UpdateFirstPersonCamera();
-        }
+        // Always update the first-person camera rotation
+        UpdateFirstPersonCamera();
 
         if (isCursorVisible && Input.GetMouseButtonDown(0))
         {
@@ -411,14 +410,30 @@ public class CombinedPlayerController : MonoBehaviour
     // New method for updating the first-person camera
     private void UpdateFirstPersonCamera()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        if (!firstPersonMode && !insideFirstPersonZone)
+        {
+            // Calculate the player's forward direction based on their movement direction
+            Vector3 forwardDirection = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            // Only update the first-person camera rotation if the player is actually moving
+            if (forwardDirection.magnitude > 0)
+            {
+                float targetAngle = Mathf.Atan2(forwardDirection.x, forwardDirection.z) * Mathf.Rad2Deg;
+                Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            }
+        }
+        else if (firstPersonMode || !insideFirstPersonZone)
+        {
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        firstPersonCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+            firstPersonCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+            transform.Rotate(Vector3.up * mouseX);
+        }
     }
 
     // New method for toggling the first-person camera mode
