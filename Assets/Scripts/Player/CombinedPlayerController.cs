@@ -87,6 +87,11 @@ public class CombinedPlayerController : MonoBehaviour
     [Tooltip("Isometric camera controller script")]
     public IsometricCameraController isometricCameraController;
 
+    [Header("FPS Zone Assets")]
+    [Tooltip("Array of assets to enable or disable in FPS zones")]
+    public GameObject[] fpsZoneAssets;
+    private bool assetsEnabled = true;
+
     [SerializeField]
     private PlayerDeath playerDeath;
 
@@ -453,6 +458,48 @@ public class CombinedPlayerController : MonoBehaviour
             Cursor.visible = false;
             transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Reset player's rotation
         }
+
+        if (firstPersonMode)
+        {
+            // Swoop in the isometric camera
+            yield return StartCoroutine(isometricCameraController.SwoopIn());
+
+            // Disable the isometric camera and enable the FPS camera
+            isometricCameraController.enabled = false;
+            firstPersonCamera.enabled = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            // Enable/disable FPS zone assets
+            ToggleFPSZoneAssets(false);
+        }
+        else
+        {
+            // Swoop out the isometric camera
+            yield return StartCoroutine(isometricCameraController.SwoopOut());
+
+            // Disable the FPS camera and enable the isometric camera
+            isometricCameraController.enabled = true;
+            firstPersonCamera.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = false;
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Reset player's rotation
+
+            // Enable/disable FPS zone assets
+            ToggleFPSZoneAssets(true);
+        }
+    }
+
+    private void ToggleFPSZoneAssets(bool enable)
+    {
+        if (assetsEnabled == enable) return;
+
+        foreach (GameObject asset in fpsZoneAssets)
+        {
+            asset.SetActive(enable);
+        }
+
+        assetsEnabled = enable;
     }
 
     private void OnTriggerExit(Collider other)

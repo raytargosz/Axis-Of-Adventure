@@ -79,6 +79,32 @@ public class IsometricCameraController : MonoBehaviour
     [Header("Character Controller")]
     public CharacterController playerCharacterController;
 
+    private Vector3 originalOffset;
+    private float originalRotationSpeed;
+    private float originalSmoothingSpeed;
+    private float originalRotationAngle;
+    private float originalVerticalAngle;
+    private float originalMinDistance;
+    private float originalMaxDistance;
+    private float originalMinFov;
+    private float originalMaxFov;
+    private float originalFovSpeed;
+
+    private void SaveOriginalSettings()
+    {
+        originalOffset = offset;
+        originalRotationSpeed = rotationSpeed;
+        originalSmoothingSpeed = smoothingSpeed;
+        originalRotationAngle = rotationAngle;
+        originalVerticalAngle = verticalAngle;
+        originalMinDistance = minDistance;
+        originalMaxDistance = maxDistance;
+        originalMinFov = minFov;
+        originalMaxFov = maxFov;
+        originalFovSpeed = fovSpeed;
+    }
+
+
     public void Jump()
     {
         if (playerCharacterController.isGrounded)
@@ -104,6 +130,7 @@ public class IsometricCameraController : MonoBehaviour
         rotationStartTime = -rotationDuration;
         audioSource = GetComponent<AudioSource>();
         lastSFXTime = Time.time;
+        SaveOriginalSettings();
 
         // Store the initial position of the camera
         initialPosition = transform.position;
@@ -331,5 +358,73 @@ public class IsometricCameraController : MonoBehaviour
         {
             ToggleFirstPersonZone(false);
         }
+    }
+
+    public void UpdateCameraSettings(Vector3 newOffset, float newRotationSpeed, float newSmoothingSpeed, float newRotationAngle, float newVerticalAngle, float newMinDistance, float newMaxDistance, float newMinFov, float newMaxFov, float newFovSpeed, float transitionDuration)
+    {
+        // Save the original camera settings for resetting later
+        SaveOriginalSettings();
+
+        // Apply the new settings
+        offset = newOffset;
+        rotationSpeed = newRotationSpeed;
+        smoothingSpeed = newSmoothingSpeed;
+        rotationAngle = newRotationAngle;
+        verticalAngle = newVerticalAngle;
+        minDistance = newMinDistance;
+        maxDistance = newMaxDistance;
+        minFov = newMinFov;
+        maxFov = newMaxFov;
+        fovSpeed = newFovSpeed;
+
+        // Smoothly transition the camera settings
+        StartCoroutine(TransitionCameraSettings(transitionDuration));
+    }
+
+    public void ResetCameraSettings(float transitionDuration)
+    {
+        // Restore the original camera settings
+        offset = originalOffset;
+        rotationSpeed = originalRotationSpeed;
+        smoothingSpeed = originalSmoothingSpeed;
+        rotationAngle = originalRotationAngle;
+        verticalAngle = originalVerticalAngle;
+        minDistance = originalMinDistance;
+        maxDistance = originalMaxDistance;
+        minFov = originalMinFov;
+        maxFov = originalMaxFov;
+        fovSpeed = originalFovSpeed;
+
+        // Smoothly transition the camera settings
+        StartCoroutine(TransitionCameraSettings(transitionDuration));
+    }
+
+    private IEnumerator TransitionCameraSettings(float transitionDuration)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPosition = transform.position;
+        Quaternion startRotation = transform.rotation;
+        float startFov = cam.fieldOfView;
+
+        Vector3 targetPosition = target.position - Quaternion.Euler(verticalAngle, rotationAngle, 0) * Vector3.forward * distance + offset;
+        Quaternion targetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
+        float targetFov = Mathf.Clamp(cam.fieldOfView, minFov, maxFov);
+
+        while (elapsedTime < transitionDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / transitionDuration;
+
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
+            cam.fieldOfView = Mathf.Lerp(startFov, targetFov, t);
+
+            yield return null;
+        }
+
+        // Set the final values to ensure they match the target values
+        transform.position = targetPosition;
+        transform.rotation = targetRotation;
+        cam.fieldOfView = targetFov;
     }
 }
