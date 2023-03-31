@@ -117,6 +117,8 @@ public class CombinedPlayerController : MonoBehaviour
     private bool insideFirstPersonZone = false;
     private bool insideInteractiveSceneZone = false;
 
+    public float cameraSwitchTime = 0.5f;
+
     void SetCustomCursor(Texture2D cursorTexture)
     {
         if (cursorTexture == null)

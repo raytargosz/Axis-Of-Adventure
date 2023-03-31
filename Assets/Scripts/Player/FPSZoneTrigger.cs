@@ -1,11 +1,12 @@
 using UnityEngine;
+using System.Collections;
 
 public class FPSZoneTrigger : MonoBehaviour
 {
     [SerializeField] private GameObject[] assetsToEnable;
     [SerializeField] private GameObject[] assetsToDisable;
     [SerializeField] private CombinedPlayerController playerController;
-    [SerializeField] private float fpsCameraYOffset = 1f; // Add this line for the Y-axis offset
+    [SerializeField] private float fpsCameraYOffset = 1f; 
 
     private Vector3 initialCameraPosition;
 
@@ -30,8 +31,8 @@ public class FPSZoneTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            ToggleAssets(assetsToEnable, false);
-            ToggleAssets(assetsToDisable, true);
+            StartCoroutine(ToggleAssetsWithDelay(assetsToEnable, false, playerController.cameraSwitchTime));
+            StartCoroutine(ToggleAssetsWithDelay(assetsToDisable, true, playerController.cameraSwitchTime));
 
             if (playerController != null)
             {
@@ -39,6 +40,13 @@ public class FPSZoneTrigger : MonoBehaviour
             }
         }
     }
+
+    private IEnumerator ToggleAssetsWithDelay(GameObject[] assets, bool enable, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ToggleAssets(assets, enable);
+    }
+
 
     private void ToggleAssets(GameObject[] assets, bool enable)
     {
