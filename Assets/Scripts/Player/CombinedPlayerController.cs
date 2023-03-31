@@ -100,7 +100,9 @@ public class CombinedPlayerController : MonoBehaviour
     private Vector3 moveDirection;
     private bool isGrounded;
     private float jumpTime;
-    private int remainingJumps;
+
+    public int remainingJumps;
+
     private bool wasGrounded;
     private BobbingObject bobbingObject;
     private bool isMenuActive = false;
@@ -318,7 +320,7 @@ public class CombinedPlayerController : MonoBehaviour
         }
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         RaycastHit hit;
         Vector3 sphereCastOrigin = transform.position + controller.center + Vector3.up * (-controller.height / 2 + groundCheckRadius);
