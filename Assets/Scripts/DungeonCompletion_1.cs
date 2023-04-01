@@ -5,7 +5,7 @@ using UnityEngine;
 /// such as the final boss, last room, or exit door. When the player interacts with this object,
 /// the dungeon will be marked as completed, and the next world space will be unlocked as needed.
 /// </summary>
-public class DungeonCompletion_1 : MonoBehaviour
+public class DungeonCompletion : MonoBehaviour
 {
     [Header("Dungeon Configuration")]
     [Tooltip("The index of the WorldSpace this dungeon belongs to.")]
