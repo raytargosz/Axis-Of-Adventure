@@ -6,6 +6,10 @@ public class PickupController : MonoBehaviour
     public float holdDistance = 1f;
     public LayerMask pickupLayer;
     public DisplayControlsUI displayControlsUI;
+    public AudioClip pickupSFX;
+    public AudioClip dropSFX;
+    public GameObject pickupVFXPrefab;
+    public AudioSource audioSource;
 
     private GameObject heldObject;
     private Camera playerCamera;
@@ -49,6 +53,15 @@ public class PickupController : MonoBehaviour
                 {
                     heldObject = colliders[0].gameObject;
                     heldObject.GetComponent<Rigidbody>().isKinematic = true;
+
+                    // Reset rotation
+                    heldObject.transform.rotation = Quaternion.identity;
+
+                    // Play pickup SFX
+                    audioSource.PlayOneShot(pickupSFX);
+
+                    // Instantiate VFX
+                    Instantiate(pickupVFXPrefab, heldObject.transform.position, Quaternion.identity);
                 }
             }
         }
@@ -73,6 +86,10 @@ public class PickupController : MonoBehaviour
     {
         Rigidbody objectRigidbody = heldObject.GetComponent<Rigidbody>();
         objectRigidbody.isKinematic = false;
+
+        // Play drop SFX
+        audioSource.PlayOneShot(dropSFX);
+
         heldObject = null;
     }
 

@@ -7,6 +7,8 @@ public class PillarManager : MonoBehaviour
 
     public List<RunePressurePlate> pressurePlates;
     public GameObject dungeonDoor;
+    public List<GameObject> assetsToDisable;
+    public List<GameObject> assetsToEnable;
 
     void Awake()
     {
@@ -33,7 +35,15 @@ public class PillarManager : MonoBehaviour
 
     private void UnlockDungeon()
     {
-        // Replace with your own logic to unlock the dungeon door
-        dungeonDoor.SetActive(false);
+        // Disable and enable the corresponding assets
+        foreach (GameObject asset in assetsToDisable)
+        {
+            asset.SetActive(false);
+        }
+
+        foreach (GameObject asset in assetsToEnable)
+        {
+            asset.SetActive(true);
+        }
     }
 }
