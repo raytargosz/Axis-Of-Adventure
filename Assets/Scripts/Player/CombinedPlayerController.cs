@@ -117,7 +117,14 @@ public class CombinedPlayerController : MonoBehaviour
     private bool insideFirstPersonZone = false;
     private bool insideInteractiveSceneZone = false;
 
+    private PickupController pickupController;
+
     public float cameraSwitchTime = 0.5f;
+
+    public bool FirstPersonMode
+    {
+        get { return firstPersonMode; }
+    }
 
     void SetCustomCursor(Texture2D cursorTexture)
     {
@@ -151,6 +158,8 @@ public class CombinedPlayerController : MonoBehaviour
 
     void Start()
     {
+        pickupController = GetComponent<PickupController>();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -195,7 +204,12 @@ public class CombinedPlayerController : MonoBehaviour
 
         ApplyBoost();
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (pickupController != null && pickupController.IsHoldingObject())
+        {
+            // If the player is holding an object, check for drop and throw inputs
+            pickupController.HandleObjectDropAndThrow();
+        }
+        else if (Input.GetKeyDown(KeyCode.F))
         {
             if (insideInteractiveSceneZone)
             {
