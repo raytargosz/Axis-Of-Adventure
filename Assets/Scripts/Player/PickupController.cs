@@ -1,113 +1,88 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PickupController : MonoBehaviour
 {
     public float pickupDistance = 2f;
     public float holdDistance = 1f;
-    public float throwForce = 500f;
     public LayerMask pickupLayer;
+    public DisplayControlsUI displayControlsUI;
 
     private GameObject heldObject;
     private Camera playerCamera;
-    private CombinedPlayerController combinedPlayerController;
-    private DisplayControlsUI displayControlsUI;
-
-    private string fpsDropText = "Press LMB or F to drop";
-    private string fpsDropThrowText = "Press LMB or F to drop / RMB to throw";
-    private string isoDropText = "Press LMB or F to drop";
-
-    public bool IsHoldingObject()
-    {
-        return heldObject != null;
-    }
+    private SphereCollider pickupTrigger;
 
     void Start()
     {
         playerCamera = GetComponentInChildren<Camera>();
-        combinedPlayerController = GetComponent<CombinedPlayerController>();
-        displayControlsUI = FindObjectOfType<DisplayControlsUI>();
+
+        // Create and configure the pickup trigger
+        pickupTrigger = gameObject.AddComponent<SphereCollider>();
+        pickupTrigger.isTrigger = true;
+        pickupTrigger.radius = pickupDistance;
     }
 
-    private void Update()
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Pickup"))
+        {
+            displayControlsUI.SetText("Press F to pick up");
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Pickup"))
+        {
+            displayControlsUI.ClearText();
+        }
+    }
+
+    void Update()
     {
         if (heldObject == null)
         {
-            CheckForPickup();
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                Collider[] colliders = Physics.OverlapSphere(transform.position, pickupDistance, pickupLayer);
+
+                if (colliders.Length > 0)
+                {
+                    heldObject = colliders[0].gameObject;
+                    heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                }
+            }
         }
         else
         {
             HoldObject();
-            HandleObjectDropAndThrow();
-        }
-    }
 
-
-    private void CheckForPickup()
-    {
-        RaycastHit hit;
-        Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-        bool isFPSMode = combinedPlayerController.FirstPersonMode;
-
-        if (Physics.Raycast(ray, out hit, pickupDistance, pickupLayer))
-        {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                heldObject = hit.collider.gameObject;
-                heldObject.GetComponent<Rigidbody>().isKinematic = true;
-                displayControlsUI.SetText(isFPSMode ? fpsDropText : isoDropText);
+                DropObject();
             }
         }
     }
 
-
     private void HoldObject()
     {
         Vector3 holdPosition = playerCamera.transform.position + playerCamera.transform.forward * holdDistance;
-        Rigidbody heldObjectRigidbody = heldObject.GetComponent<Rigidbody>();
-        heldObjectRigidbody.velocity = (holdPosition - heldObject.transform.position) * 5f;
-    }
-
-
-    public void HandleObjectDropAndThrow()
-    {
-        bool isFPSMode = combinedPlayerController.FirstPersonMode;
-
-        // Drop object with left mouse button (LMB) or F key
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("Drop input detected");
-            DropObject();
-            displayControlsUI.SetText(combinedPlayerController.FirstPersonMode ? fpsDropText : isoDropText);
-        }
-
-        // Throw object with right mouse button (RMB) in FPS mode only
-        if (isFPSMode && Input.GetMouseButtonDown(1))
-        {
-            Debug.Log("Throw input detected");
-            ThrowObject();
-            displayControlsUI.SetText(fpsDropThrowText);
-        }
+        heldObject.transform.position = Vector3.Lerp(heldObject.transform.position, holdPosition, Time.deltaTime * 5f);
     }
 
     private void DropObject()
     {
         Rigidbody objectRigidbody = heldObject.GetComponent<Rigidbody>();
         objectRigidbody.isKinematic = false;
-        objectRigidbody.useGravity = true;
         heldObject = null;
-        displayControlsUI.SetText("");
     }
 
-    private void ThrowObject()
+    public bool IsHoldingObject()
     {
-        Rigidbody objectRigidbody = heldObject.GetComponent<Rigidbody>();
-        objectRigidbody.isKinematic = false;
-        objectRigidbody.useGravity = true;
-        objectRigidbody.AddForce(playerCamera.transform.forward * throwForce);
-        heldObject = null;
-        displayControlsUI.SetText("");
+        return heldObject != null;
     }
 
+    public void HandleObjectDropAndThrow()
+    {
+        // This method is now empty, as the drop functionality is already handled in the Update method.
+    }
 }
