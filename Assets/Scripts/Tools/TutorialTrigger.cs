@@ -13,8 +13,10 @@
 //
 // Make sure your tutorial text objects use TextMeshPro (TMP) components.
 
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
 
 public class TutorialTrigger : MonoBehaviour
 {
@@ -51,7 +53,7 @@ public class TutorialTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player") && !isActivated)
         {
-            tutorialText.ActivateTutorialFromCollider(tutorialIndex);
+            //tutorialText.ActivateTutorialFromCollider(tutorialIndex);
             isActivated = true;
         }
     }

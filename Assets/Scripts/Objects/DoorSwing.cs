@@ -1,10 +1,3 @@
-// This script controls door swinging behavior, opening the door when the player enters its trigger area.
-// To use this script:
-// 1. Attach this script to a door GameObject.
-// 2. Make sure the door GameObject has a Collider component set as a trigger.
-// 3. Make sure the player GameObject has the "Player" tag assigned.
-// 4. Set the rotationSpeed, openAngle, doorOpenSound, and openSoundVolume fields in the Unity Inspector.
-
 using System.Collections;
 using UnityEngine;
 
@@ -22,6 +15,9 @@ public class DoorSwing : MonoBehaviour
     [Tooltip("Volume of the door open sound. Range: 0 to 1.")]
     [Range(0, 1)] public float openSoundVolume = 1f;
 
+    [Tooltip("Other doors to open when this door is opened.")]
+    public DoorSwing[] additionalDoors;
+
     private AudioSource audioSource;
     private bool isOpen = false;
     private float initialRotationY;
@@ -38,17 +34,36 @@ public class DoorSwing : MonoBehaviour
         if (other.CompareTag("Player") && !isOpen)
         {
             OpenDoor(other.transform.position);
+
+            // Open additional doors without playing the sound
+            foreach (DoorSwing door in additionalDoors)
+            {
+                if (door != null)
+                {
+                    door.OpenDoorWithoutSound(other.transform.position);
+                }
+            }
         }
     }
 
-    private void OpenDoor(Vector3 playerPosition)
+    public void OpenDoor(Vector3 playerPosition)
+    {
+        OpenDoorInternal(playerPosition, true);
+    }
+
+    public void OpenDoorWithoutSound(Vector3 playerPosition)
+    {
+        OpenDoorInternal(playerPosition, false);
+    }
+
+    private void OpenDoorInternal(Vector3 playerPosition, bool playSound)
     {
         Vector3 doorToPlayer = playerPosition - transform.position;
         Vector3 crossProduct = Vector3.Cross(transform.forward, doorToPlayer);
         float direction = Mathf.Sign(crossProduct.y);
         targetRotationY = initialRotationY + openAngle * direction;
         isOpen = true;
-        StartCoroutine(RotateDoor(targetRotationY, doorOpenSound, openSoundVolume));
+        StartCoroutine(RotateDoor(targetRotationY, playSound ? doorOpenSound : null, openSoundVolume));
     }
 
     private IEnumerator RotateDoor(float targetRotationY, AudioClip sound, float volume)

@@ -17,8 +17,8 @@ public class TutorialText : MonoBehaviour
         [Tooltip("Tutorial text to display")]
         public TMP_Text tutorialText;
 
-        [Tooltip("Required buttons to press to continue")]
-        public KeyCode[] requiredButtons = { KeyCode.Space };
+        [Tooltip("Duration the tutorial text is displayed")]
+        public float duration = 3f;
 
         [Tooltip("SFX to play when the tutorial text comes up")]
         public AudioClip sfx;
@@ -35,35 +35,14 @@ public class TutorialText : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        StartCoroutine(ActivateTutorialWithDelay(3f));
     }
 
-    private void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        if (tutorialActive)
+        if (other.CompareTag("Player") && !tutorialActive)
         {
-            TutorialInfo current = tutorials[currentTutorial];
-            foreach (KeyCode key in current.requiredButtons)
-            {
-                if (Input.GetKeyDown(key))
-                {
-                    tutorialActive = false;
-                    current.tutorialText.gameObject.SetActive(false);
-                    current.tutorialText.alpha = 0;
-                    if (++currentTutorial < tutorials.Count)
-                    {
-                        StartCoroutine(ActivateTutorialWithDelay(1f));
-                    }
-                    break;
-                }
-            }
+            ActivateTutorial();
         }
-    }
-
-    private IEnumerator ActivateTutorialWithDelay(float delay)
-    {
-        yield return new WaitForSecondsRealtime(delay);
-        ActivateTutorial();
     }
 
     private void ActivateTutorial()
@@ -75,16 +54,15 @@ public class TutorialText : MonoBehaviour
             current.tutorialText.gameObject.SetActive(true);
             current.tutorialText.alpha = 1;
             audioSource.PlayOneShot(current.sfx, current.volume);
+
+            StartCoroutine(DisplayAndFadeOutText(current.duration));
         }
     }
 
-    public void ActivateTutorialFromCollider(int tutorialIndex)
+    private IEnumerator DisplayAndFadeOutText(float displayDuration)
     {
-        if (tutorialIndex < tutorials.Count)
-        {
-            currentTutorial = tutorialIndex;
-            ActivateTutorial();
-        }
+        yield return new WaitForSeconds(displayDuration);
+        FadeOutTutorialText();
     }
 
     public void FadeOutTutorialText()
@@ -107,5 +85,6 @@ public class TutorialText : MonoBehaviour
 
         textColor.a = 0;
         tutorialTextMesh.color = textColor;
+        tutorialActive = false;
     }
 }

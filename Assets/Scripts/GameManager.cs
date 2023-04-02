@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -30,11 +32,25 @@ public class GameManager : MonoBehaviour
         // Initialize dungeon completion status array
         dungeonCompletionStatus = new bool[worldSpaces.Length];
 
+        // Set the first World Space dungeon completion status to true
+        dungeonCompletionStatus[0] = true;
+
         // Initialize WorldSpaces
+        worldSpaces[0].SetActive(true); // Make sure World Space 1 is active
         for (int i = 1; i < worldSpaces.Length; i++)
         {
             worldSpaces[i].SetActive(false);
         }
+
+        // Subscribe to the SceneManager.sceneLoaded event
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from the SceneManager.sceneLoaded event
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     // Cube Collection
@@ -91,5 +107,13 @@ public class GameManager : MonoBehaviour
     public void SetCurrentWorldSpace(int worldSpaceIndex)
     {
         currentWorldSpace = worldSpaceIndex;
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Update the WorldSpaces based on the dungeonCompletionStatus array
+        for (int i = 0; i < worldSpaces.Length; i++)
+        {
+            worldSpaces[i].SetActive(dungeonCompletionStatus[i]);
+        }
     }
 }
