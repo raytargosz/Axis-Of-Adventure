@@ -8,6 +8,9 @@ public class BobbingObject : MonoBehaviour
     [Tooltip("Frequency of the bobbing motion.")]
     [SerializeField] private float bobbingFrequency = 1f;
 
+    [Tooltip("Frequency of the bobbing motion when sprinting.")]
+    [SerializeField] private float sprintingBobbingFrequency = 1.5f;
+
     [Tooltip("Toggle between local and world space for the bobbing motion.")]
     [SerializeField] private bool useLocalSpace = true;
 
@@ -18,22 +21,28 @@ public class BobbingObject : MonoBehaviour
     [Tooltip("Speed of the Y rotation.")]
     [SerializeField] private float yRotationSpeed = 1f;
 
+    [Header("Player Movement")]
+    [Tooltip("Reference to the PlayerMovement script.")]
+    [SerializeField] private CombinedPlayerController playerController;
+
+    [Header("SFX Settings")]
+    [Tooltip("Sound effects to play when sprinting and bobbing.")]
+    [SerializeField] private AudioClip[] sprintSFX;
+
     private Vector3 startPosition;
     private float timeOffset;
 
-    public float GetVerticalMovement()
-    {
-        return bobbingAmplitude * bobbingFrequency * Mathf.Cos((Time.time + timeOffset) * bobbingFrequency);
-    }
+    [Header("SFX Settings")]
+    [SerializeField] private AudioClip[] sfxArray;
+    [SerializeField][Range(0, 1)] private float sfxVolume = 0.5f;
+    [SerializeField][Range(0.1f, 2)] private float[] sfxPitchArray;
 
-    public float GetVerticalVelocity()
-    {
-        return bobbingAmplitude * bobbingFrequency * Mathf.Cos((Time.time + timeOffset) * bobbingFrequency);
-    }
+    private AudioSource audioSource;
+    private int currentSfxIndex = -1;
+
 
     private void Start()
     {
-        // Store the initial position of the object depending on the useLocalSpace setting
         if (useLocalSpace)
         {
             startPosition = transform.localPosition;
@@ -43,29 +52,84 @@ public class BobbingObject : MonoBehaviour
             startPosition = transform.position;
         }
 
-        // Randomize the time offset to create variation in the bobbing motion
         timeOffset = Random.Range(0f, 2 * Mathf.PI);
+
+        playerController = GetComponentInParent<CombinedPlayerController>();
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = true;
+        audioSource.volume = sfxVolume;
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
 
-    private void FixedUpdate()
+    private void ManageSfx(bool isSprinting)
     {
-        // Calculate the new position of the object based on the bobbing parameters
-        Vector3 newPosition = startPosition + Vector3.up * bobbingAmplitude * Mathf.Sin((Time.time + timeOffset) * bobbingFrequency);
-
-        // Update the position of the object depending on the useLocalSpace setting
-        if (useLocalSpace)
+        if (isSprinting)
         {
-            transform.localPosition = newPosition;
+            if (!audioSource.isPlaying)
+            {
+                currentSfxIndex = Random.Range(0, sfxArray.Length);
+                audioSource.clip = sfxArray[currentSfxIndex];
+                audioSource.pitch = sfxPitchArray[currentSfxIndex];
+                audioSource.volume = sfxVolume;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
         }
         else
         {
-            transform.position = newPosition;
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+        }
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (playerController != null)
+        {
+            bool isSprinting = playerController.IsSprinting();
+            float currentBobbingFrequency = isSprinting ? sprintingBobbingFrequency : bobbingFrequency;
+            float speedRatio = isSprinting ? sprintingBobbingFrequency / bobbingFrequency : 1f;
+
+            Vector3 newPosition = startPosition + Vector3.up * bobbingAmplitude * Mathf.Sin((Time.time + timeOffset) * currentBobbingFrequency * speedRatio);
+
+            if (useLocalSpace)
+            {
+                transform.localPosition = newPosition;
+            }
+            else
+            {
+                transform.position = newPosition;
+            }
+
+            HandleSFX(isSprinting);
         }
 
-        // Rotate the object around the Y axis if enabled
         if (enableYRotation)
         {
             transform.Rotate(0, yRotationSpeed * Time.deltaTime, 0, useLocalSpace ? Space.Self : Space.World);
         }
+        ManageSfx(playerController.IsSprinting());
+    }
+
+    private void HandleSFX(bool isSprinting)
+    {
+        if (isSprinting && !audioSource.isPlaying && sprintSFX.Length > 0)
+        {
+            audioSource.clip = sprintSFX[Random.Range(0, sprintSFX.Length)];
+            audioSource.Play();
+        }
+        else if (!isSprinting && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    public float GetVerticalMovement()
+    {
+        return transform.position.y - startPosition.y;
     }
 }

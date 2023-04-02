@@ -92,6 +92,10 @@ public class CombinedPlayerController : MonoBehaviour
     public GameObject[] fpsZoneAssets;
     private bool assetsEnabled = true;
 
+    [Header("Tilt Settings")]
+    [SerializeField] private float tiltAngle = 10f;
+    [SerializeField] private float tiltSpeed = 5f;
+
     [SerializeField]
     private PlayerDeath playerDeath;
 
@@ -216,6 +220,7 @@ public class CombinedPlayerController : MonoBehaviour
                 StartCoroutine(fadeController.FadeOut());
             }
         }
+        TiltWhenSprinting();
     }
 
     private float GetBobbingObjectVerticalMovement()
@@ -546,5 +551,20 @@ public class CombinedPlayerController : MonoBehaviour
         {
             insideInteractiveSceneZone = false;
         }
+    }
+
+    public bool IsSprinting()
+    {
+        return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+    }
+
+    private void TiltWhenSprinting()
+    {
+        float targetTiltAngle = IsSprinting() ? tiltAngle : 0f;
+        float currentTiltAngle = Mathf.LerpAngle(transform.eulerAngles.x, targetTiltAngle, Time.deltaTime * tiltSpeed);
+
+        Vector3 newRotation = transform.eulerAngles;
+        newRotation.x = currentTiltAngle;
+        transform.eulerAngles = newRotation;
     }
 }
