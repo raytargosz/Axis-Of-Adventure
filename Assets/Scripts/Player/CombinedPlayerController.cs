@@ -130,6 +130,19 @@ public class CombinedPlayerController : MonoBehaviour
         get { return firstPersonMode; }
     }
 
+    private Vector2 GetPlayerInput()
+    {
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+        return new Vector2(horizontal, vertical);
+    }
+
+    public bool IsMoving()
+    {
+        Vector2 input = GetPlayerInput();
+        return Mathf.Abs(input.x) > 0.1f || Mathf.Abs(input.y) > 0.1f;
+    }
+
     void SetCustomCursor(Texture2D cursorTexture)
     {
         if (cursorTexture == null)
@@ -560,6 +573,11 @@ public class CombinedPlayerController : MonoBehaviour
 
     private void TiltWhenSprinting()
     {
+        if (firstPersonMode || insideFirstPersonZone)
+        {
+            return; // Do not tilt if the player is in first-person mode or inside an FPS zone
+        }
+
         float targetTiltAngle = IsSprinting() ? tiltAngle : 0f;
         float currentTiltAngle = Mathf.LerpAngle(transform.eulerAngles.x, targetTiltAngle, Time.deltaTime * tiltSpeed);
 

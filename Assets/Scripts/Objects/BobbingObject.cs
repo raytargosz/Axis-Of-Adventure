@@ -37,6 +37,10 @@ public class BobbingObject : MonoBehaviour
     [SerializeField][Range(0, 1)] private float sfxVolume = 0.5f;
     [SerializeField][Range(0.1f, 2)] private float[] sfxPitchArray;
 
+    [Header("Opposite Bobbing Objects")]
+    [Tooltip("Array of BobbingObject prefabs that will always have opposite bobbing directions.")]
+    [SerializeField] private BobbingObject[] oppositeBobbingObjects;
+
     private AudioSource audioSource;
     private int currentSfxIndex = -1;
 
@@ -54,12 +58,29 @@ public class BobbingObject : MonoBehaviour
 
         timeOffset = Random.Range(0f, 2 * Mathf.PI);
 
+        // Check if there are opposite bobbing objects and ensure they have opposite bobbing directions
+        if (oppositeBobbingObjects.Length > 0)
+        {
+            float oppositeTimeOffset = (timeOffset + Mathf.PI) % (2 * Mathf.PI);
+            foreach (BobbingObject oppositeBobbingObject in oppositeBobbingObjects)
+            {
+                oppositeBobbingObject.SetTimeOffset(oppositeTimeOffset);
+            }
+        }
+
+        timeOffset = Random.Range(0f, 2 * Mathf.PI);
+
         playerController = GetComponentInParent<CombinedPlayerController>();
 
         audioSource = GetComponent<AudioSource>();
         audioSource.loop = true;
         audioSource.volume = sfxVolume;
         audioSource = gameObject.AddComponent<AudioSource>();
+    }
+
+    public void SetTimeOffset(float newTimeOffset)
+    {
+        timeOffset = newTimeOffset;
     }
 
     private void ManageSfx(bool isSprinting)
@@ -91,8 +112,26 @@ public class BobbingObject : MonoBehaviour
         if (playerController != null)
         {
             bool isSprinting = playerController.IsSprinting();
-            float currentBobbingFrequency = isSprinting ? sprintingBobbingFrequency : bobbingFrequency;
-            float speedRatio = isSprinting ? sprintingBobbingFrequency / bobbingFrequency : 1f;
+            bool isMoving = playerController.IsMoving();
+
+            UpdateBobbing(isMoving);
+
+            HandleSFX(isSprinting);
+        }
+
+        if (enableYRotation)
+        {
+            transform.Rotate(0, yRotationSpeed * Time.deltaTime, 0, useLocalSpace ? Space.Self : Space.World);
+        }
+        ManageSfx(playerController.IsSprinting());
+    }
+
+    private void UpdateBobbing(bool shouldBob)
+    {
+        if (shouldBob)
+        {
+            float currentBobbingFrequency = playerController.IsSprinting() ? sprintingBobbingFrequency : bobbingFrequency;
+            float speedRatio = playerController.IsSprinting() ? sprintingBobbingFrequency / bobbingFrequency : 1f;
 
             Vector3 newPosition = startPosition + Vector3.up * bobbingAmplitude * Mathf.Sin((Time.time + timeOffset) * currentBobbingFrequency * speedRatio);
 
@@ -104,16 +143,20 @@ public class BobbingObject : MonoBehaviour
             {
                 transform.position = newPosition;
             }
-
-            HandleSFX(isSprinting);
         }
-
-        if (enableYRotation)
+        else
         {
-            transform.Rotate(0, yRotationSpeed * Time.deltaTime, 0, useLocalSpace ? Space.Self : Space.World);
+            if (useLocalSpace)
+            {
+                transform.localPosition = startPosition;
+            }
+            else
+            {
+                transform.position = startPosition;
+            }
         }
-        ManageSfx(playerController.IsSprinting());
     }
+
 
     private void HandleSFX(bool isSprinting)
     {
