@@ -15,6 +15,17 @@ public class GameManager : MonoBehaviour
     private bool[] dungeonCompletionStatus;
     private int currentWorldSpace = 1;
 
+    private void Update()
+    {
+        for (int i = 1; i <= 9; i++)
+        {
+            if (Input.GetKeyDown(i.ToString()))
+            {
+                DevCheatUnlockWorldSpace(i);
+            }
+        }
+    }
+
     private void Awake()
     {
         // Singleton setup
@@ -114,6 +125,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < worldSpaces.Length; i++)
         {
             worldSpaces[i].SetActive(dungeonCompletionStatus[i]);
+        }
+    }
+
+    private void DevCheatUnlockWorldSpace(int worldSpaceIndex)
+    {
+        if (worldSpaceIndex >= 1 && worldSpaceIndex <= worldSpaces.Length)
+        {
+            CompleteDungeon(worldSpaceIndex - 1);
         }
     }
 }

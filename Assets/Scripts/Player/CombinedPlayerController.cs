@@ -105,6 +105,8 @@ public class CombinedPlayerController : MonoBehaviour
     private bool isGrounded;
     private float jumpTime;
 
+    private Camera lastActiveCamera;
+
     public int remainingJumps;
 
     private bool wasGrounded;
@@ -209,6 +211,8 @@ public class CombinedPlayerController : MonoBehaviour
         {
             ToggleCursorVisibility();
         }
+
+        CheckCameraRendering();
 
         float bobbingObjectVerticalMovement = GetBobbingObjectVerticalMovement();
 
@@ -472,11 +476,8 @@ public class CombinedPlayerController : MonoBehaviour
         }
     }
 
-    // New method for toggling the first-person camera mode
     IEnumerator ToggleFirstPersonMode()
     {
-        //Debug.Log("Toggling first-person mode");
-
         firstPersonMode = !firstPersonMode;
         isometricCameraController.ToggleFirstPersonZone(firstPersonMode);
 
@@ -488,6 +489,8 @@ public class CombinedPlayerController : MonoBehaviour
 
         if (firstPersonMode)
         {
+            lastActiveCamera = isometricCameraController.GetComponent<Camera>();
+
             // Swoop in the isometric camera
             yield return StartCoroutine(isometricCameraController.SwoopIn());
 
@@ -499,6 +502,8 @@ public class CombinedPlayerController : MonoBehaviour
         }
         else
         {
+            lastActiveCamera = firstPersonCamera;
+
             // Swoop out the isometric camera
             yield return StartCoroutine(isometricCameraController.SwoopOut());
 
@@ -509,35 +514,21 @@ public class CombinedPlayerController : MonoBehaviour
             Cursor.visible = false;
             transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Reset player's rotation
         }
+    }
 
-        if (firstPersonMode)
+    private void CheckCameraRendering()
+    {
+        if (!isometricCameraController.GetComponent<Camera>().isActiveAndEnabled && !firstPersonCamera.isActiveAndEnabled)
         {
-            // Swoop in the isometric camera
-            yield return StartCoroutine(isometricCameraController.SwoopIn());
-
-            // Disable the isometric camera and enable the FPS camera
-            isometricCameraController.enabled = false;
-            firstPersonCamera.enabled = true;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            // Enable/disable FPS zone assets
-            ToggleFPSZoneAssets(false);
-        }
-        else
-        {
-            // Swoop out the isometric camera
-            yield return StartCoroutine(isometricCameraController.SwoopOut());
-
-            // Disable the FPS camera and enable the isometric camera
-            isometricCameraController.enabled = true;
-            firstPersonCamera.enabled = false;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = false;
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Reset player's rotation
-
-            // Enable/disable FPS zone assets
-            ToggleFPSZoneAssets(true);
+            if (lastActiveCamera == firstPersonCamera)
+            {
+                StartCoroutine(ToggleFirstPersonMode());
+            }
+            else
+            {
+                firstPersonMode = true; // Force firstPersonMode to true so that ToggleFirstPersonMode() can switch back to Isometric mode
+                StartCoroutine(ToggleFirstPersonMode());
+            }
         }
     }
 
