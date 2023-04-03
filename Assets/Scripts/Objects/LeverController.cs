@@ -38,6 +38,11 @@ public class LeverController : MonoBehaviour
     private AudioSource audioSource;
     private bool leverActivated = false;
 
+    public bool IsLeverActivated()
+    {
+        return leverActivated;
+    }
+
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
