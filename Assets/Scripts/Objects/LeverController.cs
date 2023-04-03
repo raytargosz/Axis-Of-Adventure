@@ -34,6 +34,12 @@ public class LeverController : MonoBehaviour
     [Tooltip("Particle system for the FX")]
     public ParticleSystem fx;
 
+    // Add these two new fields
+    [Header("Power Activation")]
+    [Tooltip("UI text for power activation prompt")]
+    public GameObject powerActivationUI;
+    private bool powerActivated = false;
+
     private bool playerInRange = false;
     private AudioSource audioSource;
     private bool leverActivated = false;
@@ -119,7 +125,14 @@ public class LeverController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
-            interactUI.SetActive(true);
+            if (!powerActivated)
+            {
+                powerActivationUI.SetActive(true);
+            }
+            else
+            {
+                interactUI.SetActive(true);
+            }
         }
     }
 
@@ -128,7 +141,14 @@ public class LeverController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            interactUI.SetActive(false);
+            if (!powerActivated)
+            {
+                powerActivationUI.SetActive(false);
+            }
+            else
+            {
+                interactUI.SetActive(false);
+            }
         }
     }
 
