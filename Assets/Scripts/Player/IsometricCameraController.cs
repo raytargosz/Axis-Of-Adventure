@@ -16,10 +16,6 @@ public class IsometricCameraController : MonoBehaviour
     [Tooltip("Speed of the camera swooping in and out")]
     public float cameraSwoopSpeed = 5f;
 
-    [Header("Camera Swooping")]
-    [Tooltip("Enable or disable camera swooping")]
-    public bool cameraSwoopingEnabled = true;
-
     [Tooltip("Distance for the camera to swoop in")]
     public float swoopInDistance = 2f;
 
@@ -180,8 +176,6 @@ public class IsometricCameraController : MonoBehaviour
 
     private void RotateLeft()
     {
-        if (!cameraSwoopingEnabled) return;
-
         targetRotationAngle += 90f;
         rotationStartTime = Time.time;
         PlaySFX(rotateLeftSFX, rotationSFXVolume);
@@ -189,8 +183,6 @@ public class IsometricCameraController : MonoBehaviour
 
     private void RotateRight()
     {
-        if (!cameraSwoopingEnabled) return;
-
         targetRotationAngle -= 90f;
         rotationStartTime = Time.time;
         PlaySFX(rotateRightSFX, rotationSFXVolume);
@@ -249,63 +241,76 @@ public class IsometricCameraController : MonoBehaviour
         {
             this.enabled = true;
         }
-        StartCoroutine(CameraTransition());
+        StartCoroutine(CameraTransition(enableFirstPerson));
     }
 
-    private IEnumerator CameraTransition(bool enableFirstPerson, float rotationDuration)
+    IEnumerator CameraTransition(bool enableFirstPerson)
     {
-        float elapsed = 0f;
+    // Get the Exposure and MotionBlur settings
+    //Exposure exposureSettings;
+    //MotionBlur motionBlurSettings;
 
-        Vector3 startCameraPosition = cam.transform.position;
-        Quaternion startCameraRotation = cam.transform.rotation;
+    //postProcessingProfile.TryGet(out exposureSettings);
+    //postProcessingProfile.TryGet(out motionBlurSettings);
 
-        while (elapsed < rotationDuration)
+    // Enable the post-processing effects
+    //exposureSettings.active = true;
+    //motionBlurSettings.active = true;
+
+    float transitionDuration = enableFirstPerson ? isoToFpsSpeed : fpsToIsoSpeed; // Use the appropriate speed variable
+        float elapsedTime = 0f;
+
+        Vector3 initialCameraPosition = transform.position;
+        Quaternion initialCameraRotation = transform.rotation;
+
+        Vector3 targetCameraPosition;
+        Quaternion targetCameraRotation;
+
+        if (enableFirstPerson)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / rotationDuration;
-            float rotationDuration
+            targetCameraPosition = firstPersonCamera.transform.position;
+            targetCameraRotation = firstPersonCamera.transform.rotation;
+        }
+        else
+        {
+            targetCameraPosition = target.position - initialCameraRotation * Vector3.forward * distance + offset;
+            targetCameraRotation = initialCameraRotation;
+        }
 
-            if (cameraSwoopingEnabled)
-            {
-                if (inFirstPersonZone)
-                {
-                    yield return StartCoroutine(SwoopIn());
-                }
-                else
-                {
-                    yield return StartCoroutine(SwoopOut());
-                }
-            }
+        disableLookAtCharacter = true;
 
-            cam.transform.position = Vector3.Lerp(startCameraPosition, targetCameraPosition, t);
-            cam.transform.rotation = Quaternion.Lerp(startCameraRotation, targetCameraRotation, t);
+        while (elapsedTime < transitionDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsedTime / transitionDuration); // Use SmoothStep for easing
+
+            transform.position = Vector3.Lerp(initialCameraPosition, targetCameraPosition, t);
+            transform.rotation = Quaternion.Lerp(initialCameraRotation, targetCameraRotation, t);
+
             yield return null;
         }
 
-        cam.transform.position = targetCameraPosition;
-        cam.transform.rotation = targetCameraRotation;
+        disableLookAtCharacter = false;
 
-        IEnumerator SwoopIn()
+        inFirstPersonZone = enableFirstPerson;
+
+        // Enable/disable the Camera components instead of the game objects
+        firstPersonCamera.GetComponent<Camera>().enabled = inFirstPersonZone;
+        cam.enabled = !inFirstPersonZone;
+
+        // Disable the IsometricCameraController script when in the first-person zone
+        this.enabled = !inFirstPersonZone;
+
+        // If not in the first-person zone, move the IsoCamera back to its original position
+        if (!inFirstPersonZone)
         {
-            Vector3 swoopDirection = targetCameraPosition - startCameraPosition;
-            float swoopProgress = Mathf.Clamp01(elapsed / swoopDuration);
-            return Swoop(swoopDirection, swoopProgress);
+            transform.position = initialPosition;
         }
 
-        IEnumerator SwoopOut()
-        {
-            Vector3 swoopDirection = startCameraPosition - targetCameraPosition;
-            float swoopProgress = Mathf.Clamp01((rotationDuration - elapsed) / swoopDuration);
-            return Swoop(swoopDirection, swoopProgress);
-        }
-
-        IEnumerator Swoop(Vector3 direction, float progress)
-        {
-            float swoopAmount = swoopCurve.Evaluate(progress) * swoopMagnitude;
-            cam.transform.position += direction.normalized * swoopAmount;
-            yield return null;
-        }
-    }
+    // Disable the post-processing effects
+    //exposureSettings.active = false;
+    //motionBlurSettings.active = false;
+}
 
     // Swoop in the camera
     public IEnumerator SwoopIn()
@@ -355,7 +360,7 @@ public class IsometricCameraController : MonoBehaviour
         }
     }
 
-    public void UpdateCameraSettings(Vector3 newOffset, float newRotationSpeed, float newSmoothingSpeed, float newRotationAngle, float newVerticalAngle, float newMinDistance, float newMaxDistance, float newMinFov, float newMaxFov, float newFovSpeed, float rotationDuration)
+    public void UpdateCameraSettings(Vector3 newOffset, float newRotationSpeed, float newSmoothingSpeed, float newRotationAngle, float newVerticalAngle, float newMinDistance, float newMaxDistance, float newMinFov, float newMaxFov, float newFovSpeed, float transitionDuration)
     {
         // Save the original camera settings for resetting later
         SaveOriginalSettings();
@@ -372,11 +377,11 @@ public class IsometricCameraController : MonoBehaviour
         maxFov = newMaxFov;
         fovSpeed = newFovSpeed;
 
-        // Smoothly transition the camera rotationDuration
-        StartCoroutine(TransitionCameraSettings(rotationDuration));
+        // Smoothly transition the camera settings
+        StartCoroutine(TransitionCameraSettings(transitionDuration));
     }
 
-    public void ResetCameraSettings(float rotationDuration)
+    public void ResetCameraSettings(float transitionDuration)
     {
         // Restore the original camera settings
         offset = originalOffset;
@@ -391,10 +396,10 @@ public class IsometricCameraController : MonoBehaviour
         fovSpeed = originalFovSpeed;
 
         // Smoothly transition the camera settings
-        StartCoroutine(TransitionCameraSettings(rotationDuration));
+        StartCoroutine(TransitionCameraSettings(transitionDuration));
     }
 
-    private IEnumerator TransitionCameraSettings(float rotationDuration)
+    private IEnumerator TransitionCameraSettings(float transitionDuration)
     {
         float elapsedTime = 0f;
         Vector3 startPosition = transform.position;
@@ -405,10 +410,10 @@ public class IsometricCameraController : MonoBehaviour
         Quaternion targetRotation = Quaternion.Euler(verticalAngle, rotationAngle, 0);
         float targetFov = Mathf.Clamp(cam.fieldOfView, minFov, maxFov);
 
-        while (elapsedTime < rotationDuration)
+        while (elapsedTime < transitionDuration)
         {
             elapsedTime += Time.deltaTime;
-            float t = elapsedTime / rotationDuration;
+            float t = elapsedTime / transitionDuration;
 
             transform.position = Vector3.Lerp(startPosition, targetPosition, t);
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, t);
