@@ -59,6 +59,12 @@ public class LeverController : MonoBehaviour
         }
     }
 
+    public void ActivatePower()
+    {
+        powerActivated = true;
+        powerActivationUI.SetActive(false);
+    }
+
     private void ActivateLever()
     {
         leverActivated = true;
