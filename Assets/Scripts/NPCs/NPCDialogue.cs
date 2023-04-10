@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Opsive.UltimateCharacterController.Camera; 
+using Opsive.UltimateCharacterController.Character;
 
 public class NPCDialogue : MonoBehaviour
 {
@@ -12,8 +14,8 @@ public class NPCDialogue : MonoBehaviour
     public float textTypeSpeed = 0.05f;
     public float cameraZoomAmount = 15f;
 
-    private PlayerController playerController; // Replace with the actual name of your player controller script
-    private CameraController cameraController; // Replace with the actual name of your camera controller script
+    private UltimateCharacterLocomotion playerController; 
+    private CameraController cameraController; 
     private int currentLineIndex = 0;
     private bool inRange = false;
     private bool isTyping = false;
@@ -57,7 +59,7 @@ public class NPCDialogue : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             inRange = true;
-            playerController = other.GetComponent<PlayerController>();
+            playerController = other.GetComponent<UltimateCharacterLocomotion>();
             cameraController = other.GetComponent<CameraController>();
             playerController.enabled = false;
             cameraController.enabled = false;
