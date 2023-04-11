@@ -20,7 +20,6 @@ namespace Opsive.UltimateCharacterController.Camera
     using System.Collections.Generic;
     using UnityEngine;
 
-
     /// <summary>
     /// Base class for the first and third person camera controllers. 
     /// </summary>
@@ -96,10 +95,6 @@ namespace Opsive.UltimateCharacterController.Camera
         public GameObject CameraGameObject { get { return m_ActiveViewType.CameraGameObject; } }
         public Transform CameraTransform { get { return m_ActiveViewType.CameraTransform; } }
 
-        private CameraRotate customCameraRotation;
-
-
-
         public ViewType[] ViewTypes { get { return m_ViewTypes; }
             set
             {
@@ -160,12 +155,8 @@ namespace Opsive.UltimateCharacterController.Camera
         /// <summary>
         /// Initialize the camera controller.
         /// </summary>
-        /// 
-
         protected override void Awake()
         {
-
-            customCameraRotation = GetComponent<CameraRotate>();
             base.Awake();
 
             m_GameObject = gameObject;
@@ -531,30 +522,19 @@ namespace Opsive.UltimateCharacterController.Camera
         /// </summary>
         /// <param name="horizontalMovement">-1 to 1 value specifying the amount of horizontal movement.</param>
         /// <param name="verticalMovement">-1 to 1 value specifying the amount of vertical movement.</param>
-        // Add this line in your custom script
-
         public void Rotate(float horizontalMovement, float verticalMovement)
         {
-            if (m_CharacterLocomotion.TimeScale == 0)
-            {
+            if (m_CharacterLocomotion.TimeScale == 0) {
                 return;
             }
 
-            // If a transition is active then move the transition rather than the active view type. The transitioner will move the view type.
-            if (m_Transitioner != null && m_Transitioner.IsTransitioning)
-            {
+            // If a transition is active then move the transition rather then the active view type. The transitioner will move the view type.
+            if (m_Transitioner != null && m_Transitioner.IsTransitioning) {
                 m_Transform.rotation = m_Transitioner.Rotate(horizontalMovement, verticalMovement, false);
-            }
-            else
-            {
-                // Check if the custom DisablePositionReset is false before resetting the camera's position
-                if (customCameraRotation == null || !CameraRotate.DisablePositionReset)
-                {
-                    m_Transform.rotation = m_ActiveViewType.Rotate(horizontalMovement, verticalMovement, false);
-                }
+            } else {
+                m_Transform.rotation = m_ActiveViewType.Rotate(horizontalMovement, verticalMovement, false);
             }
         }
-
 
         /// <summary>
         /// Moves the camera.

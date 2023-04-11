@@ -39,8 +39,6 @@ namespace Opsive.UltimateCharacterController.Camera
         private bool m_AllowGameplayInput;
         private List<ActiveInputEvent> m_ActiveInputList;
 
-        public bool DisablePositionReset { get; set; }
-
         /// <summary>
         /// Initializes the handler.
         /// </summary>
