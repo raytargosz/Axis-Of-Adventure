@@ -6,6 +6,8 @@ public class CameraSwitcher_2 : MonoBehaviour
     public Camera mainCamera;
     [Tooltip("The secondary stationary camera")]
     public Camera secondaryCamera;
+    [Tooltip("Layer mask for the player")]
+    public LayerMask playerLayer;
 
     private void Start()
     {
@@ -13,10 +15,10 @@ public class CameraSwitcher_2 : MonoBehaviour
         secondaryCamera.enabled = false;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
         // Check if the object entering the trigger is the player
-        if (collision.collider.CompareTag("Player"))
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
             Debug.Log("Player entered trigger");
             // Disable the main camera and enable the secondary camera
@@ -25,10 +27,10 @@ public class CameraSwitcher_2 : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
         // Check if the object exiting the trigger is the player
-        if (collision.collider.CompareTag("Player"))
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
             Debug.Log("Player exited trigger");
             // Re-enable the main camera and disable the secondary camera
