@@ -4,7 +4,7 @@ public class LaserCaster : MonoBehaviour
 {
     public LayerMask hitLayers;
     public float rotationSpeed = 10f;
-    public TargetController targetController;
+    public TargetController[] targetControllers;
 
     private Camera playerCamera;
     private bool isActivated;
@@ -12,6 +12,12 @@ public class LaserCaster : MonoBehaviour
     private void Start()
     {
         playerCamera = Camera.main;
+
+        // Disable all TargetController scripts
+        foreach (TargetController target in targetControllers)
+        {
+            target.enabled = false;
+        }
     }
 
     private void Update()
@@ -26,16 +32,28 @@ public class LaserCaster : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Target"))
                 {
-                    targetController.Activate();
+                    foreach (TargetController target in targetControllers)
+                    {
+                        if (target.gameObject.GetInstanceID() == hit.collider.gameObject.GetInstanceID())
+                        {
+                            target.Activate();
+                        }
+                    }
                 }
                 else
                 {
-                    targetController.Deactivate();
+                    foreach (TargetController target in targetControllers)
+                    {
+                        target.Deactivate();
+                    }
                 }
             }
             else
             {
-                targetController.Deactivate();
+                foreach (TargetController target in targetControllers)
+                {
+                    target.Deactivate();
+                }
             }
         }
     }
@@ -48,6 +66,9 @@ public class LaserCaster : MonoBehaviour
     public void Deactivate()
     {
         isActivated = false;
-        targetController.Deactivate();
+        foreach (TargetController target in targetControllers)
+        {
+            target.Deactivate();
+        }
     }
 }
