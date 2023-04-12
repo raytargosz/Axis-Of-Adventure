@@ -6,6 +6,7 @@
 
 namespace Opsive.UltimateCharacterController.Character
 {
+    
     using Opsive.Shared.Events;
     using Opsive.Shared.Game;
 #if ULTIMATE_CHARACTER_CONTROLLER_MULTIPLAYER
@@ -23,6 +24,8 @@ namespace Opsive.UltimateCharacterController.Character
     using Opsive.UltimateCharacterController.Utility;
     using System.Collections.Generic;
     using UnityEngine;
+
+
 
     /// <summary>
     /// The UltimateCharacterLocomotion component extends the CharacterLocomotion functionality by handling the following features:
@@ -71,6 +74,7 @@ namespace Opsive.UltimateCharacterController.Character
         [SerializeField] protected UnityFloatEvent m_OnChangeTimeScaleEvent;
         [Tooltip("Unity event invoked when the moving platforms have changed.")]
         [SerializeField] protected UnityTransformEvent m_OnChangeMovingPlatformsEvent;
+
 
         public GameObject GameObject => gameObject;
         public string FirstPersonStateName { get { return m_FirstPersonStateName; } set { m_FirstPersonStateName = value; } }
