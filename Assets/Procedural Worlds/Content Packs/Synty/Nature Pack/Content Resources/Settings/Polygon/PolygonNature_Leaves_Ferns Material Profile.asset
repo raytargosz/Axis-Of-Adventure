@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be6604ad3feef014bba8cacc1ce5b1e2, type: 3}
+  m_Name: PolygonNature_Leaves_Ferns Material Profile
+  m_EditorClassIdentifier: 
+  m_presets:
+  - Chance Off
+  - Summer Green
+  - Fall Bright Green
+  - Autumn Brown
+  - Winter Snow
+  m_materialData:
+  - m_presetName: Summer Green
+    m_chanceOf: 17.3
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: 730ff3ffce95d734bb3265b03565f586, type: 2}
+      m_lodMaterials: []
+  - m_presetName: Fall Bright Green
+    m_chanceOf: 26.1
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: 4d93a5d078512a045b31336287c36502, type: 2}
+      m_lodMaterials: []
+  - m_presetName: Autumn Yellow
+    m_chanceOf: 15.9
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: 9770c738dca48f64583391b322991262, type: 2}
+      m_lodMaterials: []
+  - m_presetName: Winter Brown
+    m_chanceOf: 100
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: a32c71d62d5f58b4aaaa60ed3e2463bd, type: 2}
+      m_lodMaterials: []
+  m_assignMaterialIDByName: 1
+  m_overridePreset: 1
+  m_selectedPreset: 1
