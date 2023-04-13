@@ -53,11 +53,14 @@ public class CombinedBoost : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Trigger entered");
         if (other.CompareTag("Player"))
         {
+            Debug.Log("Player detected");
             Rigidbody playerRigidbody = other.GetComponent<Rigidbody>();
             if (playerRigidbody != null && !_isOnCooldown)
             {
+                Debug.Log("Applying force");
                 // Use the object's local forward-axis in world space as the force direction
                 Vector3 forceDirection = boostDirectionReference.forward;
                 playerRigidbody.AddForce(forceDirection * boostForce, ForceMode.Impulse);
@@ -72,8 +75,13 @@ public class CombinedBoost : MonoBehaviour
 
                 StartCoroutine(SpinAnimation());
             }
+            else
+            {
+                Debug.Log("Rigidbody is null or on cooldown");
+            }
         }
     }
+
 
     void OnValidate()
     {
