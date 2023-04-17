@@ -11,8 +11,8 @@ public class FadeTransition : MonoBehaviour
     [Tooltip("Duration of the fade animation.")]
     public float fadeDuration = 1f;
 
-    [Tooltip("Scene index to transition to.")]
-    public int targetSceneIndex;
+    [Tooltip("Scene name to transition to.")]
+    public string targetSceneName;
 
     [Tooltip("Objects to enable when player enters the trigger.")]
     public GameObject[] objectsToEnable;
@@ -49,6 +49,6 @@ public class FadeTransition : MonoBehaviour
         }
 
         // Load the target scene when the fade animation is complete.
-        SceneManager.LoadScene(targetSceneIndex);
+        SceneManager.LoadScene(targetSceneName);
     }
 }
