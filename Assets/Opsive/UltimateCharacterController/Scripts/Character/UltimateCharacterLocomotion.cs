@@ -555,6 +555,23 @@ namespace Opsive.UltimateCharacterController.Character
             }
         }
 
+        public Transform GetActiveCameraTransform()
+        {
+            // You can replace "MainCamera" with the tag of your main camera if it is different
+            var mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            if (mainCamera != null)
+            {
+                var activeCamera = mainCamera.GetComponentInChildren<Camera>();
+                if (activeCamera != null)
+                {
+                    return activeCamera.transform;
+                }
+            }
+            return null;
+        }
+
+
+
         /// <summary>
         /// Moves and rotates the character.
         /// </summary>
@@ -568,8 +585,16 @@ namespace Opsive.UltimateCharacterController.Character
             AbilitiesAllowInput(out allowPositionalInput, out allowRotationalInput);
             if (allowPositionalInput) {
                 // Positional input is allowed - use the movement type to determine how the character should move.
+                var activeCameraTransform = GetActiveCameraTransform();
+                if (activeCameraTransform != null)
+                {
+                    // Make the input relative to the camera's forward direction
+                    m_InputVector = Quaternion.Euler(0, activeCameraTransform.eulerAngles.y, 0) * m_InputVector;
+                }
                 m_InputVector = m_ActiveMovementType.GetInputVector(m_InputVector);
-            } else {
+
+            }
+            else {
                 m_InputVector = Vector2.zero;
             }
             if (!allowRotationalInput) {

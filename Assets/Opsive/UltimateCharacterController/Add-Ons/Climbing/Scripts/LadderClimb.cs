@@ -50,6 +50,10 @@ namespace Opsive.UltimateCharacterController.AddOns.Climbing
             StartFromHang = 16,     // The character can start climbing from the Agility Pack Hang ability.
 #endif
         }
+        [Tooltip("Default climbing speed.")]
+        [SerializeField] protected float m_DefaultClimbingSpeed = 1f;
+        [Tooltip("Climbing speed increase when holding the SHIFT key.")]
+        [SerializeField] protected float m_ShiftSpeedModifier = 2f;
 
         [Tooltip("The movements that the ability can perform.")]
         [SerializeField] protected AllowedMovement m_AllowedMovements = (AllowedMovement)(-1);
@@ -242,11 +246,13 @@ namespace Opsive.UltimateCharacterController.AddOns.Climbing
         /// </summary>
         public override void Update()
         {
+            bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
             base.Update();
 
             if (m_ClimbState != ClimbState.Climb) {
-                m_CharacterLocomotion.InputVector = Vector2.zero;
-                return;
+                float climbSpeed = m_DefaultClimbingSpeed * (shiftHeld ? m_ShiftSpeedModifier : 1f);
+                m_CharacterLocomotion.InputVector = new Vector2(m_CharacterLocomotion.InputVector.x, m_CharacterLocomotion.InputVector.y * climbSpeed);
             }
 
             // Ladders do not allow horizontal movement.
