@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58971c84a8da56f46bc72a85a31d8a2d, type: 3}
   m_Name: Default Atmosphere
   m_EditorClassIdentifier: 
-  win1: 0
+  win1: 1
   win2: 0
   win3: 1
   win4: 0
@@ -2173,7 +2173,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    floatVal: 1
+    floatVal: 0.64
     curveVal:
       serializedVersion: 2
       m_Curve:
@@ -2256,7 +2256,7 @@ MonoBehaviour:
   fogStart1: 2
   fogStart2: 5
   fogStart3: 10
-  fogStart4: 30
+  fogStart4: 13.7
   fogHeight:
     mode: 1
     colorVal: {r: 1, g: 1, b: 1, a: 1}
@@ -2289,7 +2289,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    floatVal: 1.3
+    floatVal: 0.936
     curveVal:
       serializedVersion: 2
       m_Curve:
