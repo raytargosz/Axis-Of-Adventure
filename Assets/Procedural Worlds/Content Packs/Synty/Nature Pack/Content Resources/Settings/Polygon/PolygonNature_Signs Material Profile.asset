@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be6604ad3feef014bba8cacc1ce5b1e2, type: 3}
+  m_Name: PolygonNature_Signs Material Profile
+  m_EditorClassIdentifier: 
+  m_presets:
+  - Chance Of
+  - Default Sign
+  - Yellow Sign
+  - Moss Sign
+  - Snow Sign
+  m_materialData:
+  - m_presetName: Default Sign
+    m_chanceOf: 45
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: b72e16591230315448c77c827b522ae1, type: 2}
+  - m_presetName: Yellow Sign
+    m_chanceOf: 5
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: 61c3662a5606f6a4f8dbb613cb348f7f, type: 2}
+  - m_presetName: Moss Sign
+    m_chanceOf: 35
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: f971896c66d4a724b98ed0c2bd995abe, type: 2}
+  - m_presetName: Snow Sign
+    m_chanceOf: 1
+    m_presetMaterials:
+    - m_chanceOf: 0
+      m_material: {fileID: 2100000, guid: 239f8445e474ae346800ba50c85a4f90, type: 2}
+  m_assignMaterialIDByName: 1
+  m_overridePreset: 0
+  m_selectedPreset: 0

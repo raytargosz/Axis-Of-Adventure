@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be6604ad3feef014bba8cacc1ce5b1e2, type: 3}
+  m_Name: PolygonNature_Leaves_Willow Material Profile
+  m_EditorClassIdentifier: 
+  m_presets:
+  - Chance Of
+  - Summer Green
+  - Pink Flourish
+  - Brown Swamp
+  - Winter Yellow
+  m_materialData:
+  - m_presetName: Summer Green
+    m_chanceOf: 100
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: a6f307ed54af22a41ac0875b84aed3a9, type: 2}
+      m_lodMaterials:
+      - m_lodID: 1
+        m_material: {fileID: 2100000, guid: 14d2b6e1919e77f4ea7542a3967748e6, type: 2}
+  - m_presetName: Pink Flourish
+    m_chanceOf: 100
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: 6cff7c801e0232143a019be6992ae26e, type: 2}
+      m_lodMaterials:
+      - m_lodID: 1
+        m_material: {fileID: 2100000, guid: d5b1fa07021730d4fb778591be4374f3, type: 2}
+  - m_presetName: Brown Swamp
+    m_chanceOf: 100
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: f90b3cdeb5d46c04eb2f0cf9f44881d0, type: 2}
+      m_lodMaterials:
+      - m_lodID: 1
+        m_material: {fileID: 2100000, guid: 3da26891ca1f02f47bc4abd3e3528dac, type: 2}
+  - m_presetName: Winter Yellow
+    m_chanceOf: 100
+    m_presetMaterials:
+    - m_chanceOf: 80
+      m_material: {fileID: 2100000, guid: e7dd1ada3bfb96943a9a496dc452d8c3, type: 2}
+      m_lodMaterials:
+      - m_lodID: 1
+        m_material: {fileID: 2100000, guid: 8ca48541c69e382498ea7ef79914a850, type: 2}
+  m_assignMaterialIDByName: 1
+  m_overridePreset: 0
+  m_selectedPreset: 0
