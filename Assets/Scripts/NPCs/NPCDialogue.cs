@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using Opsive.UltimateCharacterController.Camera; 
+using Opsive.UltimateCharacterController.Camera;
 using Opsive.UltimateCharacterController.Character;
 
 public class NPCDialogue : MonoBehaviour
@@ -12,10 +12,13 @@ public class NPCDialogue : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public string[] dialogueLines;
     public float textTypeSpeed = 0.05f;
-    public float cameraZoomAmount = 15f;
+    public TextMeshProUGUI interactIndicator;
+    public float targetFov = 60f;
+    public float fovTransitionSpeed = 2f;
+    public float fadeDuration = 0.5f;
 
-    private UltimateCharacterLocomotion playerController; 
-    private CameraController cameraController; 
+    private UltimateCharacterLocomotion playerController;
+    private CameraController cameraController;
     private int currentLineIndex = 0;
     private bool inRange = false;
     private bool isTyping = false;
@@ -24,14 +27,21 @@ public class NPCDialogue : MonoBehaviour
 
     void Start()
     {
-        dialogueCanvas.SetActive(false);
         mainCamera = Camera.main;
         originalFov = mainCamera.fieldOfView;
+
+        // Set the initial alpha of the dialogue canvas elements
+        SetDialogueCanvasAlpha(0);
+
+        // Set the initial alpha of the interact indicator to 0
+        Color textColor = interactIndicator.color;
+        textColor.a = 0;
+        interactIndicator.color = textColor;
     }
 
     void Update()
     {
-        if (inRange && (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Space)))
+        if (inRange && Input.GetKeyDown(KeyCode.F))
         {
             if (isTyping)
             {
@@ -41,7 +51,11 @@ public class NPCDialogue : MonoBehaviour
             }
             else
             {
-                if (currentLineIndex < dialogueLines.Length)
+                if (!IsDialogueCanvasVisible())
+                {
+                    StartDialogue();
+                }
+                else if (currentLineIndex < dialogueLines.Length)
                 {
                     StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
                     currentLineIndex++;
@@ -61,11 +75,14 @@ public class NPCDialogue : MonoBehaviour
             inRange = true;
             playerController = other.GetComponent<UltimateCharacterLocomotion>();
             cameraController = other.GetComponent<CameraController>();
-            playerController.enabled = false;
-            cameraController.enabled = false;
-            mainCamera.fieldOfView = originalFov - cameraZoomAmount;
-            dialogueCanvas.SetActive(true);
-            dialogueBackground.enabled = true;
+
+            // Show the interact indicator by setting alpha to 1
+            Color textColor = interactIndicator.color;
+            textColor.a = 1;
+            interactIndicator.color = textColor;
+
+            // Start the FOV transition coroutine
+            StartCoroutine(ChangeFov(targetFov));
         }
     }
 
@@ -75,17 +92,45 @@ public class NPCDialogue : MonoBehaviour
         {
             inRange = false;
             EndDialogue();
+
+            // Hide the interact indicator by setting alpha to 0
+            Color textColor = interactIndicator.color;
+            textColor.a = 0;
+            interactIndicator.color = textColor;
+
+            // Start the FOV transition coroutine
+            StartCoroutine(ChangeFov(originalFov));
         }
+    }
+
+    IEnumerator ChangeFov(float targetFov)
+    {
+        float elapsedTime = 0f;
+        float startFov = mainCamera.fieldOfView;
+
+        while (elapsedTime < fovTransitionSpeed)
+        {
+            mainCamera.fieldOfView = Mathf.Lerp(startFov, targetFov, elapsedTime / fovTransitionSpeed);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        mainCamera.fieldOfView = targetFov;
+    }
+
+    private void StartDialogue()
+    {
+        playerController.enabled = false;
+        cameraController.enabled = false;
+        StartCoroutine(FadeDialogueCanvas(1, fadeDuration));
     }
 
     private void EndDialogue()
     {
         currentLineIndex = 0;
-        dialogueCanvas.SetActive(false);
-        dialogueBackground.enabled = false;
+        StartCoroutine(FadeDialogueCanvas(0, fadeDuration));
         playerController.enabled = true;
         cameraController.enabled = true;
-        mainCamera.fieldOfView = originalFov;
     }
 
     IEnumerator TypeText(string line)
@@ -98,5 +143,37 @@ public class NPCDialogue : MonoBehaviour
             yield return new WaitForSeconds(textTypeSpeed);
         }
         isTyping = false;
+    }
+
+    IEnumerator FadeDialogueCanvas(float targetAlpha, float duration)
+    {
+        float startAlpha = dialogueBackground.color.a;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float newAlpha = Mathf.Lerp(startAlpha, targetAlpha, elapsedTime / duration);
+
+            SetDialogueCanvasAlpha(newAlpha);
+
+            yield return null;
+        }
+    }
+
+    private void SetDialogueCanvasAlpha(float alpha)
+    {
+        Color backgroundColor = dialogueBackground.color;
+        backgroundColor.a = alpha;
+        dialogueBackground.color = backgroundColor;
+
+        Color textColor = dialogueText.color;
+        textColor.a = alpha;
+        dialogueText.color = textColor;
+    }
+
+    private bool IsDialogueCanvasVisible()
+    {
+        return dialogueBackground.color.a > 0;
     }
 }

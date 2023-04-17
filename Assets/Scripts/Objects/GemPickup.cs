@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Opsive.UltimateCharacterController.Character;
+using TMPro;
 
 public class GemPickup : MonoBehaviour
 {
@@ -26,6 +27,20 @@ public class GemPickup : MonoBehaviour
     [Tooltip("Reference to the sphere collider that should be disabled on pickup.")]
     public Collider sphereCollider;
 
+    [Header("UI Settings")]
+    [Tooltip("UI TMP element to display when the gem is picked up.")]
+    public TextMeshProUGUI pickupUIText;
+
+    [Tooltip("Duration for the UI text to fade in.")]
+    public float uiFadeInDuration = 1f;
+
+    [Tooltip("Duration for the UI text to fade out.")]
+    public float uiFadeOutDuration = 2f;
+
+    [Header("Toggle Assets")]
+    [Tooltip("List of GameObjects to enable/disable upon pickup.")]
+    public List<GameObject> toggleObjects;
+
     private bool isPickedUp = false;
 
     private GemCounter gemCounter;
@@ -41,29 +56,35 @@ public class GemPickup : MonoBehaviour
         {
             Debug.LogError("GemCounter object not found in the scene.");
         }
+
+        // Hide the UI text initially
+        if (pickupUIText != null)
+        {
+            Color originalColor = pickupUIText.color;
+            pickupUIText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Replace "Player" with the tag of your player object.
         if (other.CompareTag("Player") && !isPickedUp)
         {
-            // Set isPickedUp to true to prevent repeated OnTriggerEnter calls
             isPickedUp = true;
 
-            // Call UpdateGemCounter method when the player picks up a gem.
             gemCounter.UpdateGemCounter(pickupValue);
 
             StartCoroutine(PickupAnimation());
 
-            // Instantiate VFX and destroy it after animationDuration
             GameObject vfxInstance = Instantiate(this.pickupVFX, transform.position, Quaternion.identity);
             Destroy(vfxInstance, animationDuration);
 
             AudioSource.PlayClipAtPoint(pickupSFX, transform.position);
 
-            // Disable the sphere collider.
             sphereCollider.enabled = false;
+
+            ShowPickupUI();
+
+            ToggleAssets();
         }
     }
 
@@ -82,5 +103,40 @@ public class GemPickup : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+    private void ShowPickupUI()
+    {
+        if (pickupUIText != null)
+        {
+            pickupUIText.gameObject.SetActive(true);
+            // Replace the placeholder with the pickup value
+            pickupUIText.text = string.Format(pickupUIText.text, "Somewhere A Door Has Been Unlocked");
+            StartCoroutine(FadeInAndOutUIText());
+        }
+    }
+
+    private IEnumerator FadeInAndOutUIText()
+    {
+        // Fade in
+        pickupUIText.CrossFadeAlpha(1, uiFadeInDuration, false);
+        yield return new WaitForSeconds(uiFadeInDuration);
+
+        // Wait before fading out
+        yield return new WaitForSeconds(uiFadeOutDuration);
+
+        // Fade out
+        pickupUIText.CrossFadeAlpha(0, uiFadeOutDuration, false);
+        yield return new WaitForSeconds(uiFadeOutDuration);
+
+        // Disable the UI text object
+        pickupUIText.gameObject.SetActive(false);
+    }
+
+    private void ToggleAssets()
+    {
+        foreach (GameObject obj in toggleObjects)
+        {
+            obj.SetActive(!obj.activeSelf);
+        }
     }
 }

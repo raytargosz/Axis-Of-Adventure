@@ -33,6 +33,9 @@ public class InteractiveTrigger : MonoBehaviour
     [Tooltip("Is the door locked by default?")]
     public bool lockedByDefault = true;
 
+    // Add a public GameObject for the required object
+    public GameObject requiredObject;
+
     private AudioSource audioSource;
     private bool playerInRange = false;
     private GameObject player;
@@ -100,7 +103,8 @@ public class InteractiveTrigger : MonoBehaviour
         {
             keyPickup = other.GetComponent<KeyPickup>();
 
-            if (keyPickup != null && keyPickup.HasKey)
+            // Check if the player has collected the required object
+            if (requiredObject == null || !requiredObject.activeInHierarchy)
             {
                 doorUnlocked = true;
             }
