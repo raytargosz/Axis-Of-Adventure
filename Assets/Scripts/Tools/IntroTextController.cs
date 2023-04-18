@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class IntroTextController : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class IntroTextController : MonoBehaviour
     public float fadeInSoundVolume = 1f;
     public float fadeOutSoundVolume = 1f;
     public float backgroundSoundVolume = 0.5f;
+    public Image fadeImage;
 
     private AudioSource[] sceneAudioSources;
     private Dictionary<AudioSource, float> originalVolumes;
@@ -55,6 +57,16 @@ public class IntroTextController : MonoBehaviour
     {
         yield return new WaitForSeconds(preFadeInDelay);
 
+        // Fade in the image
+        float startTime = Time.time;
+        while (Time.time < startTime + fadeInTime)
+        {
+            float t = (Time.time - startTime) / fadeInTime;
+            fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, t);
+            yield return null;
+        }
+        fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 1);
+
         bool introSoundPlayed = false;
         for (int i = 0; i < textLines.Length; i++)
         {
@@ -67,14 +79,9 @@ public class IntroTextController : MonoBehaviour
                 introSoundPlayed = true;
             }
 
-            float startTime = Time.time;
+            startTime = Time.time;
             while (Time.time < startTime + fadeInTime)
             {
-                if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-                {
-                    break;
-                }
-
                 float t = (Time.time - startTime) / fadeInTime;
                 textMeshPro.color = new Color(textMeshPro.color.r, textMeshPro.color.g, textMeshPro.color.b, t);
                 yield return null;
@@ -107,8 +114,18 @@ public class IntroTextController : MonoBehaviour
             textMeshPro.color = new Color(textMeshPro.color.r, textMeshPro.color.g, textMeshPro.color.b, 0);
             yield return new WaitForSeconds(timeBetweenTextLines);
 
-        if (i == textLines.Length - 1)
+            if (i == textLines.Length - 1)
             {
+                // Fade out the image
+                startTime = Time.time;
+                while (Time.time < startTime + fadeOutTime)
+                {
+                    float t = 1 - (Time.time - startTime) / fadeOutTime;
+                    fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, t);
+                    yield return null;
+                }
+                fadeImage.color = new Color(fadeImage.color.r, fadeImage.color.g, fadeImage.color.b, 0);
+
                 // Fade out all audio sources in the scene, except the one playing the fade out sound
                 startTime = Time.time;
                 while (Time.time < startTime + fadeOutTime)
@@ -119,7 +136,7 @@ public class IntroTextController : MonoBehaviour
                         // Check if the audio source is not the one playing the fade out sound
                         if (source != null && source != audioSource)
                         {
-                            source.volume = originalVolumes[source] * t; 
+                            source.volume = originalVolumes[source] * t;
                         }
                     }
                     yield return null;
