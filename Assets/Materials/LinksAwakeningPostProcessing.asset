@@ -18,16 +18,16 @@ MonoBehaviour:
     value: 1
   focusDistance:
     overrideState: 1
-    value: 0.135
+    value: 1.65
   aperture:
     overrideState: 1
-    value: 0.05
+    value: 14.5
   focalLength:
     overrideState: 1
-    value: 18
+    value: 56
   kernelSize:
     overrideState: 1
-    value: 0
+    value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,13 +73,13 @@ MonoBehaviour:
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.286
+    value: 0.283
   smoothness:
     overrideState: 1
-    value: 0.122
+    value: 0.174
   roundness:
     overrideState: 1
-    value: 1
+    value: 0.921
   rounded:
     overrideState: 1
     value: 1
@@ -210,7 +210,7 @@ MonoBehaviour:
     value: {fileID: 0}
     defaultState: 1
   tonemapper:
-    overrideState: 1
+    overrideState: 0
     value: 0
   toneCurveToeStrength:
     overrideState: 0
@@ -250,17 +250,17 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   saturation:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 10
   brightness:
     overrideState: 0
     value: 0
   postExposure:
     overrideState: 1
-    value: 1.4
+    value: 1
   contrast:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 20
   mixerRedOutRedIn:
     overrideState: 0
     value: 100
