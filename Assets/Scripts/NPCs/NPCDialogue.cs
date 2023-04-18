@@ -13,8 +13,6 @@ public class NPCDialogue : MonoBehaviour
     public string[] dialogueLines;
     public float textTypeSpeed = 0.05f;
     public TextMeshProUGUI interactIndicator;
-    public float targetFov = 60f;
-    public float fovTransitionSpeed = 2f;
     public float fadeDuration = 0.5f;
 
     private UltimateCharacterLocomotion playerController;
@@ -22,14 +20,9 @@ public class NPCDialogue : MonoBehaviour
     private int currentLineIndex = 0;
     private bool inRange = false;
     private bool isTyping = false;
-    private Camera mainCamera;
-    private float originalFov;
 
     void Start()
     {
-        mainCamera = Camera.main;
-        originalFov = mainCamera.fieldOfView;
-
         // Set the initial alpha of the dialogue canvas elements
         SetDialogueCanvasAlpha(0);
 
@@ -80,9 +73,6 @@ public class NPCDialogue : MonoBehaviour
             Color textColor = interactIndicator.color;
             textColor.a = 1;
             interactIndicator.color = textColor;
-
-            // Start the FOV transition coroutine
-            StartCoroutine(ChangeFov(targetFov));
         }
     }
 
@@ -97,25 +87,7 @@ public class NPCDialogue : MonoBehaviour
             Color textColor = interactIndicator.color;
             textColor.a = 0;
             interactIndicator.color = textColor;
-
-            // Start the FOV transition coroutine
-            StartCoroutine(ChangeFov(originalFov));
         }
-    }
-
-    IEnumerator ChangeFov(float targetFov)
-    {
-        float elapsedTime = 0f;
-        float startFov = mainCamera.fieldOfView;
-
-        while (elapsedTime < fovTransitionSpeed)
-        {
-            mainCamera.fieldOfView = Mathf.Lerp(startFov, targetFov, elapsedTime / fovTransitionSpeed);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        mainCamera.fieldOfView = targetFov;
     }
 
     private void StartDialogue()

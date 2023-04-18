@@ -18,6 +18,9 @@ public class DoorSwing : MonoBehaviour
     [Tooltip("Other doors to open when this door is opened.")]
     public DoorSwing[] additionalDoors;
 
+    [Tooltip("Lock the door to prevent it from opening.")]
+    public bool doorLocked = false;
+
     private AudioSource audioSource;
     private bool isOpen = false;
     private float initialRotationY;
@@ -31,7 +34,7 @@ public class DoorSwing : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !isOpen)
+        if (other.CompareTag("Player") && !isOpen && !doorLocked)
         {
             OpenDoor(other.transform.position);
 

@@ -1,18 +1,17 @@
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
 public class VignetteEffectController : MonoBehaviour
 {
-    public VolumeProfile volumeProfile;
+    public PostProcessVolume postProcessVolume;
     public Vignette vignette;
     public float darkZoneIntensity = 0.5f;
     public GameObject darkZonePrompt;
 
     private void Start()
     {
-        volumeProfile.TryGet(out vignette);
+        postProcessVolume.profile.TryGetSettings(out vignette);
     }
 
     public void EnterDarkZone()
