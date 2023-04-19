@@ -25,6 +25,7 @@ public class NPCDialogue : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("F key pressed");
         // Set the initial alpha of the dialogue canvas elements
         SetDialogueCanvasAlpha(0);
 
@@ -49,17 +50,26 @@ public class NPCDialogue : MonoBehaviour
                 if (!IsDialogueCanvasVisible())
                 {
                     StartDialogue();
-                }
-                else if (currentLineIndex < dialogueLines.Length)
-                {
-                    StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
-                    currentLineIndex++;
+                    DisplayNextLine();
                 }
                 else
                 {
-                    EndDialogue();
+                    DisplayNextLine();
                 }
             }
+        }
+    }
+
+    private void DisplayNextLine()
+    {
+        if (currentLineIndex < dialogueLines.Length)
+        {
+            StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
+            currentLineIndex++;
+        }
+        else
+        {
+            EndDialogue();
         }
     }
 
@@ -96,12 +106,14 @@ public class NPCDialogue : MonoBehaviour
     {
         EnableControllers(false);
         StartCoroutine(FadeDialogueCanvas(1, fadeDuration));
+        Debug.Log("Dialogue Canvas should be visible now"); // Add this debug statement
         npcTextController.enabled = false;
-
     }
+
 
     private void EndDialogue()
     {
+        Debug.Log("F key pressed");
         currentLineIndex = 0;
         StartCoroutine(FadeDialogueCanvas(0, fadeDuration));
         EnableControllers(true);
@@ -124,6 +136,7 @@ public class NPCDialogue : MonoBehaviour
 
     IEnumerator TypeText(string line)
     {
+        Debug.Log("TypeText Coroutine called");
         isTyping = true;
         dialogueText.text = "";
         foreach (char letter in line.ToCharArray())
@@ -133,6 +146,7 @@ public class NPCDialogue : MonoBehaviour
         }
         isTyping = false;
     }
+
 
     IEnumerator FadeDialogueCanvas(float targetAlpha, float duration)
     {
@@ -163,6 +177,6 @@ public class NPCDialogue : MonoBehaviour
 
     private bool IsDialogueCanvasVisible()
     {
-        return dialogueBackground.color.a > 0;
+        return dialogueText.color.a > 0.1f;
     }
 }
