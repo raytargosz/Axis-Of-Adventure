@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using Opsive.UltimateCharacterController.Camera;
 using Opsive.UltimateCharacterController.Character;
+using Opsive.UltimateCharacterController.Events;
 
 public class NPCDialogue : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class NPCDialogue : MonoBehaviour
     public float textTypeSpeed = 0.05f;
     public TextMeshProUGUI interactIndicator;
     public float fadeDuration = 0.5f;
+    public Canvas npcTextController;
 
     private UltimateCharacterLocomotion playerController;
     private CameraController cameraController;
@@ -92,17 +94,32 @@ public class NPCDialogue : MonoBehaviour
 
     private void StartDialogue()
     {
-        playerController.enabled = false;
-        cameraController.enabled = false;
+        EnableControllers(false);
         StartCoroutine(FadeDialogueCanvas(1, fadeDuration));
+        npcTextController.enabled = false;
+
     }
 
     private void EndDialogue()
     {
         currentLineIndex = 0;
         StartCoroutine(FadeDialogueCanvas(0, fadeDuration));
-        playerController.enabled = true;
-        cameraController.enabled = true;
+        EnableControllers(true);
+        npcTextController.enabled = true;
+
+    }
+
+    private void EnableControllers(bool enabled)
+    {
+        if (playerController != null)
+        {
+            playerController.enabled = enabled;
+        }
+
+        if (cameraController != null)
+        {
+            cameraController.enabled = enabled;
+        }
     }
 
     IEnumerator TypeText(string line)
