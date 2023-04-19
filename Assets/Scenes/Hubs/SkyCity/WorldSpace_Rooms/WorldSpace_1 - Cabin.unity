@@ -19359,6 +19359,50 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &931123246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 931123247}
+  - component: {fileID: 931123248}
+  m_Layer: 0
+  m_Name: Post FX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &931123247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931123246}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &931123248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931123246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &942132312
 GameObject:
   m_ObjectHideFlags: 0
@@ -21359,50 +21403,6 @@ Transform:
   m_Father: {fileID: 281841623}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1095219057
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1095219058}
-  - component: {fileID: 1095219059}
-  m_Layer: 0
-  m_Name: Post FX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1095219058
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095219057}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1095219059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095219057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec496125454a684bb93d5662d04938e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1102284812
 GameObject:
   m_ObjectHideFlags: 0
@@ -21845,16 +21845,14 @@ MonoBehaviour:
   dialogueText: {fileID: 299971175}
   dialogueLines:
   - Ah, you're awake! Welcome to the Hollow Cabin, traveler.
-  - I see that you're new around here. I have something important to share with you.
+  - 'I see that you''re new around here so I have something important to share. '
   - There's a dungeon nearby, holding secrets and treasures that many have sought.
   - But beware, as it's also filled with great danger and challenges that await anyone
     who enter!
-  - I had the key to the dungeon, but alas, I misplaced it somewhere while wandering
-    about.
-  - I have a feeling that the key might be on top of the terrace, just outside this
-    cabin.
+  - I had the key, but alas, I misplaced it somewhere while wandering about.
+  - I have a feeling that it might be on top of the terrace, just outside.
   - Would you be so kind as to help me find the key and unlock the dungeon?
-  - Once you find the key, meet me at the dungeons entrance.
+  - Once you find it, meet me at the dungeons entrance.
   textTypeSpeed: 0.05
   interactIndicator: {fileID: 1979998319}
   fadeDuration: 0.5
@@ -31000,7 +30998,7 @@ MonoBehaviour:
     m_Preset: {fileID: 0}
     m_BlockList: []
     m_Default: 1
-  m_UseRootMotionPosition: 0
+  m_UseRootMotionPosition: 1
   m_RootMotionSpeedMultiplier: 1
   m_MotorAcceleration: {x: 3.2, y: 0, z: 3.2}
   m_MotorDamping: 5.4
@@ -32365,7 +32363,7 @@ MonoBehaviour:
     weatherFXMixer: {fileID: 6122681528400141310, guid: 7657aaa11fc9748449b9a88b6a5dc9ca,
       type: 2}
   postFXManager:
-    parent: {fileID: 1095219058}
+    parent: {fileID: 931123247}
     _IsEnabled: 1
     _OpenTab: 0
     vfx: {fileID: 1699600702}
