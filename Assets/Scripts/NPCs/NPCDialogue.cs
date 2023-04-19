@@ -8,20 +8,48 @@ using Opsive.UltimateCharacterController.Events;
 
 public class NPCDialogue : MonoBehaviour
 {
+    [Header("Dialogue UI")]
+    [Tooltip("The parent GameObject containing the dialogue UI elements.")]
     public GameObject dialogueCanvas;
+    [Tooltip("The Image component for the dialogue background.")]
     public Image dialogueBackground;
+    [Tooltip("The TextMeshProUGUI component displaying the dialogue text.")]
     public TextMeshProUGUI dialogueText;
+
+    [Header("Dialogue Content")]
+    [Tooltip("An array of strings containing the dialogue lines.")]
     public string[] dialogueLines;
+    [Tooltip("The typing speed of the dialogue text.")]
     public float textTypeSpeed = 0.05f;
+
+    [Header("Interact Indicator")]
+    [Tooltip("The TextMeshProUGUI component that displays the interact indicator.")]
     public TextMeshProUGUI interactIndicator;
+
+    [Header("Dialogue Fade")]
+    [Tooltip("The duration of the dialogue canvas fade in and out.")]
     public float fadeDuration = 0.5f;
+
+    [Header("NPC Text Controller")]
+    [Tooltip("The Canvas component containing the NPC's text UI elements.")]
     public Canvas npcTextController;
+
+    [Header("Audio")]
+    [Tooltip("An array of audio clips corresponding to the dialogue lines.")]
+    public AudioClip[] dialogueAudioClips;
+    [Tooltip("The AudioSource component responsible for playing the audio.")]
+    public AudioSource audioSource;
+    [Tooltip("The volume of the dialogue audio clips.")]
+    [Range(0f, 1f)]
+    public float dialogueVolume = 1f;
+
 
     private UltimateCharacterLocomotion playerController;
     private CameraController cameraController;
     private int currentLineIndex = 0;
     private bool inRange = false;
     private bool isTyping = false;
+    private bool firstInteraction = true;
 
     void Start()
     {
@@ -39,37 +67,39 @@ public class NPCDialogue : MonoBehaviour
     {
         if (inRange && Input.GetKeyDown(KeyCode.F))
         {
-            if (isTyping)
+            if (!IsDialogueCanvasVisible())
             {
-                StopAllCoroutines();
-                dialogueText.text = dialogueLines[currentLineIndex];
-                isTyping = false;
+                StartDialogue();
+                DisplayNextLine();
             }
-            else
+            else if (!firstInteraction)
             {
-                if (!IsDialogueCanvasVisible())
-                {
-                    StartDialogue();
-                    DisplayNextLine();
-                }
-                else
-                {
-                    DisplayNextLine();
-                }
+                DisplayNextLine();
             }
         }
     }
 
     private void DisplayNextLine()
     {
-        if (currentLineIndex < dialogueLines.Length)
+        firstInteraction = false;
+        if (isTyping)
         {
-            StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
-            currentLineIndex++;
+            StopAllCoroutines();
+            dialogueText.text = dialogueLines[currentLineIndex];
+            isTyping = false;
+            audioSource.Stop();
         }
         else
         {
-            EndDialogue();
+            if (currentLineIndex < dialogueLines.Length)
+            {
+                StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
+                currentLineIndex++;
+            }
+            else
+            {
+                EndDialogue();
+            }
         }
     }
 
@@ -106,10 +136,9 @@ public class NPCDialogue : MonoBehaviour
     {
         EnableControllers(false);
         StartCoroutine(FadeDialogueCanvas(1, fadeDuration));
-        Debug.Log("Dialogue Canvas should be visible now"); // Add this debug statement
+        Debug.Log("Dialogue Canvas should be visible now"); 
         npcTextController.enabled = false;
     }
-
 
     private void EndDialogue()
     {
@@ -139,14 +168,16 @@ public class NPCDialogue : MonoBehaviour
         Debug.Log("TypeText Coroutine called");
         isTyping = true;
         dialogueText.text = "";
+        audioSource.clip = dialogueAudioClips[currentLineIndex - 1];
+        audioSource.Play();
         foreach (char letter in line.ToCharArray())
         {
             dialogueText.text += letter;
             yield return new WaitForSeconds(textTypeSpeed);
         }
         isTyping = false;
+        audioSource.Stop();
     }
-
 
     IEnumerator FadeDialogueCanvas(float targetAlpha, float duration)
     {
