@@ -1,48 +1,55 @@
 using UnityEngine;
-using Pegasus;
+using UnityEngine.UI;
+using System.Collections;
 
 public class PegasusFlyThrough : MonoBehaviour
 {
-    [Header("Pegasus Settings")]
-    [Tooltip("Pegasus Manager for the camera fly-through")]
-    public PegasusManager pegasusManager;
+    [Header("Trigger Settings")]
+    [Tooltip("Tag to identify the target object that enters the trigger")]
+    public string targetTag = "TargetCamera";
 
-    [Header("Completion Waypoint")]
-    [Tooltip("Waypoint GameObject representing the completion trigger")]
-    public GameObject completionWaypoint;
+    [Header("Canvas Image Settings")]
+    [Tooltip("Canvas Image to fade in when the camera enters the trigger")]
+    public Image canvasImage;
+    [Tooltip("Fade in speed for the canvas image (higher value is faster)")]
+    public float fadeInSpeed = 1f;
 
     [Header("Activation Settings")]
-    [Tooltip("GameObjects to enable when the camera enters the completion trigger")]
+    [Tooltip("GameObjects to enable when the fade in is complete")]
     public GameObject[] objectsToEnable;
 
-    [Tooltip("GameObjects to disable when the camera enters the completion trigger")]
+    [Tooltip("GameObjects to disable when the fade in is complete")]
     public GameObject[] objectsToDisable;
 
-    private bool flythroughCompleted = false;
+    private bool fadeInCompleted = false;
 
-    void Update()
+    void OnTriggerEnter(Collider other)
     {
-        if (!flythroughCompleted && pegasusManager != null && CheckCompletion())
+        if (!fadeInCompleted && other.CompareTag(targetTag))
         {
-            flythroughCompleted = true;
-            HandleFlyThroughCompletion();
+            StartCoroutine(FadeInCanvasImage());
         }
     }
 
-    private bool CheckCompletion()
+    private IEnumerator FadeInCanvasImage()
     {
-        Collider completionCollider = completionWaypoint.GetComponent<Collider>();
-        if (completionCollider != null)
+        Color currentColor = canvasImage.color;
+        float alpha = currentColor.a;
+
+        while (alpha < 1)
         {
-            return completionCollider.bounds.Contains(pegasusManager.transform.position);
+            alpha += fadeInSpeed * Time.deltaTime;
+            currentColor.a = alpha;
+            canvasImage.color = currentColor;
+            yield return null;
         }
-        return false;
+
+        fadeInCompleted = true;
+        HandleActivation();
     }
 
-    private void HandleFlyThroughCompletion()
+    private void HandleActivation()
     {
-        Debug.Log("Handling fly-through completion...");
-
         foreach (GameObject objectToEnable in objectsToEnable)
         {
             if (objectToEnable != null)
