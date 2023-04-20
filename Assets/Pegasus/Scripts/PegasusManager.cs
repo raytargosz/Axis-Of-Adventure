@@ -431,6 +431,16 @@ namespace Pegasus
             }
         }
 
+        public Vector3 GetLastWaypointPosition()
+        {
+            if (m_poiList.Count > 0)
+            {
+                return m_poiList[m_poiList.Count - 1].transform.position;
+            }
+
+            return Vector3.zero;
+        }
+
         #endregion
 
         #region Public API routines
