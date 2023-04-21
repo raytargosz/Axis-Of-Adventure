@@ -3,7 +3,6 @@ using TMPro;
 
 public class DarkZone : MonoBehaviour
 {
-    public VignetteEffectController vignetteController;
     public Inventory inventory;
     public string requiredItemName;
     public TextMeshProUGUI darkZonePrompt;
@@ -21,7 +20,6 @@ public class DarkZone : MonoBehaviour
         {
             if (!hasRequiredItem)
             {
-                vignetteController.EnterDarkZone();
                 SetDarkZonePromptAlpha(1f);
             }
             else
@@ -35,7 +33,6 @@ public class DarkZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            vignetteController.ExitDarkZone();
             SetDarkZonePromptAlpha(0f);
         }
     }

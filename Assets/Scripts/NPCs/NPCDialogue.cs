@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using Opsive.UltimateCharacterController.Camera;
 using Opsive.UltimateCharacterController.Character;
-using Opsive.UltimateCharacterController.Events;
+using Opsive.UltimateCharacterController.Events; 
 
 public class NPCDialogue : MonoBehaviour
 {
@@ -43,7 +43,7 @@ public class NPCDialogue : MonoBehaviour
     [Range(0f, 1f)]
     public float dialogueVolume = 1f;
 
-
+    private bool startDialogCalled = false;
     private UltimateCharacterLocomotion playerController;
     private CameraController cameraController;
     private int currentLineIndex = 0;
@@ -53,7 +53,6 @@ public class NPCDialogue : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("F key pressed");
         // Set the initial alpha of the dialogue canvas elements
         SetDialogueCanvasAlpha(0);
 
@@ -69,19 +68,24 @@ public class NPCDialogue : MonoBehaviour
         {
             if (!IsDialogueCanvasVisible())
             {
-                StartDialogue();
                 DisplayNextLine();
             }
-            else if (!firstInteraction)
+            else
             {
-                DisplayNextLine();
+                if (!startDialogCalled)
+                {
+                    startDialogCalled = true;
+                }
+                else
+                {
+                    DisplayNextLine();
+                }
             }
         }
     }
 
     private void DisplayNextLine()
     {
-        firstInteraction = false;
         if (isTyping)
         {
             StopAllCoroutines();
@@ -136,8 +140,8 @@ public class NPCDialogue : MonoBehaviour
     {
         EnableControllers(false);
         StartCoroutine(FadeDialogueCanvas(1, fadeDuration));
-        Debug.Log("Dialogue Canvas should be visible now"); 
         npcTextController.enabled = false;
+        startDialogCalled = true;
     }
 
     private void EndDialogue()
