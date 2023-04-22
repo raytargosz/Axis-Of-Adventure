@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.PostProcessing;
 
 public class PostProcessingZone : MonoBehaviour
@@ -15,14 +16,22 @@ public class PostProcessingZone : MonoBehaviour
     [Tooltip("The transition duration in seconds when exiting the zone")]
     public float exitTransitionDuration = 1f;
 
+    [Tooltip("The maximum grain intensity when in the zone")]
+    public float maxGrainIntensity = 1f;
+
     private bool isInZone = false;
     private float transitionProgress = 0f;
     private float currentTransitionDuration;
+
+    private Grain grain;
 
     private void Start()
     {
         newPostProcessVolume.weight = 0f;
         defaultPostProcessVolume.weight = 1f;
+
+        // Get the Grain component from the new Post Process Volume
+        newPostProcessVolume.profile.TryGetSettings(out grain);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -60,5 +69,11 @@ public class PostProcessingZone : MonoBehaviour
 
         newPostProcessVolume.weight = transitionProgress;
         defaultPostProcessVolume.weight = 1f - transitionProgress;
+
+        // Update the grain intensity based on the transition progress
+        if (grain != null)
+        {
+            grain.intensity.value = maxGrainIntensity * transitionProgress;
+        }
     }
 }
