@@ -19,6 +19,12 @@ public class PostProcessingZone : MonoBehaviour
     [Tooltip("The maximum grain intensity when in the zone")]
     public float maxGrainIntensity = 1f;
 
+    [Tooltip("The maximum grain size when in the zone")]
+    public float maxGrainSize = 3f;
+
+    [Tooltip("The time it takes for grain intensity and size to reach their maximum values (in seconds)")]
+    public float grainRampSpeed = 10f;
+
     private bool isInZone = false;
     private float transitionProgress = 0f;
     private float currentTransitionDuration;
@@ -70,10 +76,11 @@ public class PostProcessingZone : MonoBehaviour
         newPostProcessVolume.weight = transitionProgress;
         defaultPostProcessVolume.weight = 1f - transitionProgress;
 
-        // Update the grain intensity based on the transition progress
+        // Update the grain intensity and size based on the transition progress
         if (grain != null)
         {
-            grain.intensity.value = maxGrainIntensity * transitionProgress;
+            grain.intensity.value = Mathf.Lerp(0, maxGrainIntensity, transitionProgress);
+            grain.size.value = Mathf.Lerp(0, maxGrainSize, transitionProgress);
         }
     }
 }
