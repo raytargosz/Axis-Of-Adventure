@@ -68,20 +68,18 @@ public class NPCDialogue : MonoBehaviour
         {
             if (!IsDialogueCanvasVisible())
             {
-                if (firstInteraction)
+                DisplayNextLine();
+            }
+            else
+            {
+                if (!startDialogCalled)
                 {
-                    StartDialogue();
-                    DisplayNextLine();
-                    firstInteraction = false;
+                    startDialogCalled = true;
                 }
                 else
                 {
                     DisplayNextLine();
                 }
-            }
-            else
-            {
-                DisplayNextLine();
             }
         }
     }
